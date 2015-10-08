@@ -20,8 +20,12 @@ theApp.config(['$routeProvider',
                 templateUrl: 'partials/beamerView.html',
                 //controller: 'newMovieController'
             }).
+            when('/home', {
+                templateUrl: 'partials/home.html',
+                //controller: 'newMovieController'
+            }).
             otherwise({
-                redirectTo: 'index'
+                redirectTo: 'partials/home.html'
             });
     }]);
 
