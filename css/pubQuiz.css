@@ -1,0 +1,11 @@
+.room{
+    cursor: pointer;
+}
+
+.modalInput{
+width: 60%;
+}
+
+.modalSubmit {
+    margin-bottom: 0;
+}
