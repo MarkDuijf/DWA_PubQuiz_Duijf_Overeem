@@ -14,12 +14,15 @@
 
 </head>
 <body ng-app="QuizzerApp">
-<div class="navbar navbar-default"  >
-    <a class="navbar-brand" href="#/home"><b>Quizzer home</b></a>
-    <a class="navbar-brand" href="#/participant">Participate</a>
-    <a class="navbar-brand" href="#/hoster">Host</a>
-    <a class="navbar-brand" href="#/spectator">Spectate</a>
+<div class="navbar navbar-default" ng-controller="menuControl" >
+    <div ng-repeat="menu in menuItems">
+        <a class="navbar-brand" href='#/{{menu.LinkText}}' ng-click="toggleSelected(menu)"
+           ng-class="{selectedMenuItem : menu.selected}">
+            {{menu.Title}}
+        </a>
+    </div>
 </div>
+
 
 <div ng-view></div>
 

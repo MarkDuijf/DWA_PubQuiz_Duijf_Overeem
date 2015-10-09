@@ -1,6 +1,3 @@
-.room{
-    cursor: pointer;
-}
 
 .modalInput{
 width: 60%;
@@ -8,4 +5,9 @@ width: 60%;
 
 .modalSubmit {
     margin-bottom: 0;
+}
+
+.selectedMenuItem {
+    font-weight: bolder;
+    color: red;
 }
