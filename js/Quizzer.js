@@ -37,9 +37,6 @@ theApp.controller("beamerViewController", function($scope, $location){
 
 });
 
-
-
-
 theApp.controller('menuControl', ['$scope', '$location', function ($scope, $location) {
 
     $scope.menuItems = [{
@@ -63,27 +60,23 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope, $loca
 
     }];
 
-    $scope.navClass = function (page) {
-        var currentRoute = $location.path().substring(1) || 'home';
-        return page === currentRoute ? 'active' : '';
-    };
+    $scope.currentPage = 'home';
 
-    $scope.toggleSelected = function(menu){
-        $scope.menuItems.forEach(function(menuitem){
-            if (menuitem === menu){
-                menu.selected = !menu.selected;
-                console.log(menu.selected);
-                return menu.selected;
-            }
-            else{
-                menuitem.selected = !menuitem.selected;
-                console.log(menuitem.selected);
+    $scope.toggleSelected = function (menu) {
+        if(menu.LinkText != $scope.currentPage){
+            $scope.menuItems.forEach(function (menuitem) {
+            if (menuitem === menu) {
+                $scope.currentPage = menu.LinkText;
+                console.log($scope.currentPage);
                 return menu.selected;
             }
         });
-
+        }
     }
 
+    $scope.isCurrentPage = function(menuItem){
+        return menuItem.LinkText === $scope.currentPage;
+    }
 
 }]);
 
