@@ -1,0 +1,25 @@
+
+.modalInput{
+width: 60%;
+}
+
+.modalSubmit {
+    margin-bottom: 0;
+}
+
+.selectedMenuItem {
+    font-weight: bolder;
+
+}
+
+.questionInfo{
+    text-align: center;
+}
+
+.submitAnswer{
+    margin-top: 0;
+}
+
+.answerField{
+    margin-top: 3%;
+}
