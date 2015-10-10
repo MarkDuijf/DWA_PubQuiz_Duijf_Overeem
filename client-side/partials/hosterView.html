@@ -9,10 +9,10 @@
 <div class="col-lg-10">
     <h1>Create new room</h1>
     <h3>Roomname</h3>
-    <input class="input-lg" type="text">
+    <input class="input-lg" type="text" ng-model="roomName">
     <h3>Room pass</h3>
-    <input class="input-lg" type="password" ><br>
+    <input class="input-lg" type="password" ng-model="roomPass"><br>
     <h3>Admin pass</h3>
-    <input class="input-lg" type="password" ><br>
-    <input class="btn-primary" type="submit" value="Create">
+    <input class="input-lg" type="password" ng-model="adminPass"><br>
+    <input class="btn-primary" type="submit" value="Create" ng-click="createRoom()">
 </div>

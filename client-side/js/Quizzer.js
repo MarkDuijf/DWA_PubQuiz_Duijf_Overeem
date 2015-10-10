@@ -8,7 +8,8 @@ theApp.config(['$routeProvider',
                 //controller: 'RouteController'
             }).
             when('/hoster', {
-                templateUrl: 'partials/hosterView.html'
+                templateUrl: 'partials/hosterView.html',
+                controller: 'hostController'
             }).
             when('/spectator', {
                 templateUrl: 'partials/beamerView.html',
@@ -101,7 +102,16 @@ theApp.controller('participantController', function($scope){
     }
 });
 
-theApp.controller('hostController', function($scope){
-
+theApp.controller('hostController', function($scope, $http){
+    $scope.createRoom = function(){
+        console.log('attempt at room creating');
+        $http.post('/addRoom', JSON.stringify({name: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1}))
+            .success(function(){
+                console.log('post succesful!')
+            })
+            .error(function(){
+                console.log('ERRRORRR')
+            });
+    }
 });
 
