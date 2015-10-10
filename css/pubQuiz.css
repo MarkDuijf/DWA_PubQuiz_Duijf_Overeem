@@ -9,5 +9,17 @@ width: 60%;
 
 .selectedMenuItem {
     font-weight: bolder;
-    color: red;
+
+}
+
+.questionInfo{
+    text-align: center;
+}
+
+.submitAnswer{
+    margin-top: 0;
+}
+
+.answerField{
+    margin-top: 3%;
 }

@@ -24,6 +24,10 @@ theApp.config(['$routeProvider',
                 templateUrl: 'partials/home.html',
                 //controller: 'newMovieController'
             }).
+            when('/Question', {
+                templateUrl: 'partials/answerQuestion.html',
+                controller: 'participantController'
+            }).
             otherwise({
                 redirectTo: 'partials/home.html'
             });
@@ -41,23 +45,21 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope, $loca
 
     $scope.menuItems = [{
         Title: 'Quizzer',
-        LinkText: 'home',
-        selected: true
+        LinkText: 'home'
     }, {
         Title: 'Participate',
-        LinkText: 'participant',
-        selected: false
+        LinkText: 'participant'
 
     }, {
         Title: 'Host',
-        LinkText: 'hoster',
-        selected: false
+        LinkText: 'hoster'
 
     }, {
         Title: 'Spectate',
-        LinkText: 'spectator',
-        selected: false
-
+        LinkText: 'spectator'
+    }, {
+        Title: 'Question',
+        LinkText: 'Question'
     }];
 
     $scope.currentPage = 'home';
@@ -80,4 +82,23 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope, $loca
 
 }]);
 
+theApp.controller('participantController', function($scope){
 
+    $scope.answered = false;
+    $scope.responseText = document.getElementById('submitResponse');
+
+    $scope.submitAnswer = function() {
+        console.log($scope.answer);
+        if($scope.answer != undefined){
+            console.log('A')
+            $scope.answered = true;
+            $scope.responseText.innerHTML = '<h4>' + 'Your answer was submitted! You answered: ' +'<b>' +  $scope.answer + '</b>' + '</h4>';
+
+            $scope.answer = undefined;
+        }
+        else{
+            $scope.answered = true;
+            $scope.responseText.innerHTML = '<h4>' + 'please answer the question before submitting!' + '</h4>';
+        }
+    }
+});
