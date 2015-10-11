@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var roomSchema = new mongoose.Schema({
-    name: {type: String, required: true},
+    _id: {type: String, required: true},
     password: {type: String, required: true},
     teams: [{teamName: String, score: Number}],
     adminPass: {type: String, required: true},

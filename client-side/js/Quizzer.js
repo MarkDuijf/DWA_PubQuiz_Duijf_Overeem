@@ -3,8 +3,8 @@ theApp.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
             when('/participant', {
-                templateUrl: 'partials/participantsView.html'
-                //controller: 'RouteController'
+                templateUrl: 'partials/participantsView.html',
+                controller: 'participantController'
             }).
             when('/hoster', {
                 templateUrl: 'partials/hosterView.html',
@@ -56,6 +56,7 @@ theApp.controller("beamerViewController", function($scope, $location){
         return (roomName != "");
     }
 
+
 });
 
 theApp.controller('menuControl', ['$scope', '$location', function ($scope, $location) {
@@ -105,7 +106,7 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope, $loca
 
 }]);
 
-theApp.controller('participantController', function($scope){
+theApp.controller('participantController', function($scope, $http){
 
     $scope.answered = false;
     $scope.responseText = document.getElementById('submitResponse');
@@ -125,34 +126,48 @@ theApp.controller('participantController', function($scope){
             $scope.responseText.innerHTML = '<h4>' + 'please answer the question before submitting!' + '</h4>';
         }
     }
+
+    $scope.rooms = [];
+    $scope.getRooms = function(){
+        $http.get('/participant/getRooms')
+            .success(function(data){
+                data.forEach(function (room) {
+                    $scope.rooms.push(room);
+                });
+                console.log($scope.rooms);
+            })
+            .error(function(err, data){
+                console.log(err);
+            })
+    }()
+
 });
 
 theApp.controller('hostController', function($scope, $http){
     $scope.createRoom = function(){
         console.log('attempt at room creating');
-        //$http.post('/addRoom', JSON.stringify({name: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1}))
-        //    .success(function(){
-        //        console.log('post succesful!')
-        //    })
-        //    .error(function(){
-        //        console.log('ERRRORRR')
-        //    });
+        var sendData = {_id: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1}
+        $http.post('/host/addRoom', sendData)
+         .success(function(data){
+            $scope.roomName  = '';
+            $scope.roomPass  = '';
+            $scope.adminPass = '';
+            alert('room created!');
+         })
+         .error(function(data, status){
 
+         });
 
-        //$http({method: 'Post', url: '/addRoom', data: {name: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1}}).
-        //    success(function(data, status, headers, config) {
-        //        alert(data);
-        //    }).
-        //    error(function(){
-        //        alert("failed");
-        //    })
-
-        $http.post('/addRoom', function(req, res){
-            req.body = JSON.stringify({name: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1});
-            console.log(req.body);
-
-            res.send();
-        });
     };
+
+    $scope.deleteRooms = function(){
+        $http.post('/host/deleteRooms', {})
+            .success(function(data){
+                alert(data)
+            })
+            .error(function(err, status){
+                alert(err);
+            })
+    }
 });
 
