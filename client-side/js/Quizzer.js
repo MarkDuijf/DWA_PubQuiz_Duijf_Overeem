@@ -1,7 +1,6 @@
 var theApp = angular.module("QuizzerApp", ['ngRoute']);
 theApp.config(['$routeProvider',
     function($routeProvider) {
-        console.log("Hello! :)")
         $routeProvider.
             when('/participant', {
                 templateUrl: 'partials/participantsView.html'
@@ -17,7 +16,7 @@ theApp.config(['$routeProvider',
             }).
             when('/spectator:room?', {
                 templateUrl: 'partials/beamerView.html',
-                //controller: 'newMovieController'
+                controller: 'beamerViewController'
             }).
             when('/home', {
                 templateUrl: 'partials/home.html',
@@ -27,16 +26,35 @@ theApp.config(['$routeProvider',
                 templateUrl: 'partials/answerQuestion.html',
                 controller: 'participantController'
             }).
+            when('/hostQuestion', {
+                templateUrl: 'partials/hostStartQuestion.html'
+                //controller: 'hostController'
+            }).
+            when('/hostQuestionOverview', {
+                templateUrl: 'partials/hostQuestionOverview.html'
+                //controller: 'hostController'
+            }).
             otherwise({
                 redirectTo: 'partials/home.html'
             });
     }]);
 
 theApp.controller("beamerViewController", function($scope, $location){
+    $scope.roomSelected = true;
 
     $scope.openSpecRoom = function(){
-        $location.path("/beamerView/" + roomName);
+        //$location.path("/beamerView/" + roomName);
+        $scope.roomSelected = false;
     };
+
+    $scope.closeSpecRoom = function(){
+        //$location.path("/beamerView/" + roomName);
+        $scope.roomSelected = true;
+    };
+
+    $scope.roomIsSelected = function(){
+        return (roomName != "");
+    }
 
 });
 
@@ -59,6 +77,12 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope, $loca
     }, {
         Title: 'Question',
         LinkText: 'Question'
+    }, {
+        Title: 'start Question',
+        LinkText: 'hostQuestion'
+    }, {
+        Title: 'pending Question',
+        LinkText: 'hostQuestionOverview'
     }];
 
     $scope.currentPage = 'home';
@@ -89,9 +113,10 @@ theApp.controller('participantController', function($scope){
     $scope.submitAnswer = function() {
         console.log($scope.answer);
         if($scope.answer != undefined){
-            console.log('A')
             $scope.answered = true;
             $scope.responseText.innerHTML = '<h4>' + 'Your answer was submitted! You answered: ' +'<b>' +  $scope.answer + '</b>' + '</h4>';
+
+            // $http.post request met het gegeven antwoord, anders verdwijnt hij weer hieronder
 
             $scope.answer = undefined;
         }
@@ -105,13 +130,29 @@ theApp.controller('participantController', function($scope){
 theApp.controller('hostController', function($scope, $http){
     $scope.createRoom = function(){
         console.log('attempt at room creating');
-        $http.post('/addRoom', JSON.stringify({name: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1}))
-            .success(function(){
-                console.log('post succesful!')
-            })
-            .error(function(){
-                console.log('ERRRORRR')
-            });
-    }
+        //$http.post('/addRoom', JSON.stringify({name: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1}))
+        //    .success(function(){
+        //        console.log('post succesful!')
+        //    })
+        //    .error(function(){
+        //        console.log('ERRRORRR')
+        //    });
+
+
+        //$http({method: 'Post', url: '/addRoom', data: {name: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1}}).
+        //    success(function(data, status, headers, config) {
+        //        alert(data);
+        //    }).
+        //    error(function(){
+        //        alert("failed");
+        //    })
+
+        $http.post('/addRoom', function(req, res){
+            req.body = JSON.stringify({name: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1});
+            console.log(req.body);
+
+            res.send();
+        });
+    };
 });
 

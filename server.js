@@ -14,8 +14,8 @@ app.use(express.static(path.join(__dirname, 'client-side')));
 app.post('/addRoom', function(req, res){
     console.log(req.body);
     console.log(res.body);
-
-})
+    res.send();
+});
 
 mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
     Room.remove(function(){

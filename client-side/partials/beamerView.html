@@ -1,19 +1,56 @@
-<div class="col-lg-12">
+<div class="col-lg-12" ng-show="roomSelected">
     <h1>Select a room</h1>
     <div class="col-lg-5">
         <h3>Started games</h3>
-        <button class="btn-primary col-lg-11 room" ng-click="" >"Room name"<br> Teams: 5/6</button>
-        <button class="btn-primary col-lg-11 room" ng-click="" >"Room name"<br> Teams: 5/6</button>
-        <button class="btn-primary col-lg-11 room" ng-click="" >"Room name"<br> Teams: 5/6</button>
-        <button class="btn-primary col-lg-11 room" ng-click="" >"Room name"<br> Teams: 5/6</button>
-        <button class="btn-primary col-lg-11 room" ng-click="" >"Room name"<br> Teams: 5/6</button>
+        <button class="btn-primary col-lg-11 room" ng-click="openSpecRoom()">"Room name"<br> Teams: 5/6</button>
+        <button class="btn-primary col-lg-11 room" ng-click="openSpecRoom()" >"Room name"<br> Teams: 5/6</button>
+        <button class="btn-primary col-lg-11 room" ng-click="openSpecRoom()" >"Room name"<br> Teams: 5/6</button>
+        <button class="btn-primary col-lg-11 room" ng-click="openSpecRoom()" >"Room name"<br> Teams: 5/6</button>
+        <button class="btn-primary col-lg-11 room" ng-click="openSpecRoom()" >"Room name"<br> Teams: 5/6</button>
     </div>
     <div class="col-lg-5">
         <h3>Waiting games</h3>
-        <button class="btn-primary col-lg-11 room">"Room name"<br> Teams: 5/6</button>
-        <button class="btn-primary col-lg-11 room">"Room name"<br> Teams: 5/6</button>
-        <button class="btn-primary col-lg-11 room">"Room name"<br> Teams: 5/6</button>
-        <button class="btn-primary col-lg-11 room">"Room name"<br> Teams: 5/6</button>
-        <button class="btn-primary col-lg-11 room">"Room name"<br> Teams: 5/6</button>
+        <button class="btn-primary col-lg-11 room" ng-click="openSpecRoom()">"Room name"<br> Teams: 5/6</button>
+        <button class="btn-primary col-lg-11 room" ng-click="openSpecRoom()">"Room name"<br> Teams: 5/6</button>
+        <button class="btn-primary col-lg-11 room" ng-click="openSpecRoom()">"Room name"<br> Teams: 5/6</button>
+        <button class="btn-primary col-lg-11 room" ng-click="openSpecRoom()">"Room name"<br> Teams: 5/6</button>
+        <button class="btn-primary col-lg-11 room" ng-click="openSpecRoom()">"Room name"<br> Teams: 5/6</button>
     </div>
+</div>
+<div ng-hide="roomSelected">
+    <div class="col-lg-10">
+        <h3 class="questionInfo">Round 3</h3>
+        <h3 class="questionInfo">Question 6/12</h3>
+        <h3 class="questionInfo"> Which city has the largest population?</h3>
+
+        <div class="col-lg-8 col-lg-offset-2 text-center">
+            <h1>Participating teams</h1>
+            <div class="col-lg-6">
+                <h3>Teams submitted</h3>
+                    <div class="col-lg-12">"Team name"</div>
+                    <div class="col-lg-12">"Team name"</div>
+            </div>
+            <div class="col-lg-6">
+                <h3>Teams waiting</h3>
+                <div class="col-lg-12">"Team name"</div>
+                <div class="col-lg-12">"Team name"</div>
+                <div class="col-lg-12">"Team name"</div>
+                <div class="col-lg-12">"Team name"</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-2">
+        <h2>Teamscores</h2>
+        <ul class="list-group">
+            <li class="list-group-item">"teamname" - "score"</li>
+            <li class="list-group-item">"teamname" - "score"</li>
+            <li class="list-group-item">"teamname" - "score"</li>
+            <li class="list-group-item">"teamname" - "score"</li>
+            <li class="list-group-item">"teamname" - "score"</li>
+            <li class="list-group-item">"teamname" - "score"</li>
+
+        </ul>
+    </div>
+    <button class="btn-primary col-lg-2 col-lg-push-4" ng-click="closeSpecRoom()">Back to lobby</button>
 </div>
