@@ -35,7 +35,27 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
         });
     });
 
-    participantRouter
+    participantRouter.post('/joinRoom', function(req, res){
+        Room.find({_id: req.body.roomId}, function(err, result){
+            console.log(String(result[0].password));
+            console.log(req.body.roomPass);
+            if(String(result[0].roomPass) == String(req.body.roomPass)) {
+                Room.update({_id: req.body.roomId}, {
+                    $push: {
+                        Teams: {
+                            teamName: req.body.teamName,
+                            score: 0
+                        }
+                    }
+                }, {upsert: true}, function (err, data) {
+                    res.send('succes!');
+                })
+            }
+            else{
+                res.send('the password was incorrect!');
+            }
+        });
+    });
 
     hostRouter.post('/deleteRooms', function(req, res){
         Room.remove(function(){

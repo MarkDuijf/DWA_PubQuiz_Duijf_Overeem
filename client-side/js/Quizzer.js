@@ -153,10 +153,10 @@ theApp.controller('participantController', function($scope, $http){
        var roomId = header[0].innerHTML;
         $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: roomId})
             .success(function(data){
-
+                alert(data);
             })
             .error(function(err, data){
-
+                alert(data);
             })
     }
 
