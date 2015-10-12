@@ -35,6 +35,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
         });
     });
 
+    participantRouter
+
     hostRouter.post('/deleteRooms', function(req, res){
         Room.remove(function(){
 
