@@ -27,8 +27,8 @@ theApp.config(['$routeProvider',
                 controller: 'participantController'
             }).
             when('/hostQuestion', {
-                templateUrl: 'partials/hostStartQuestion.html'
-                //controller: 'hostController'
+                templateUrl: 'partials/hostStartQuestion.html',
+                controller: 'hostController'
             }).
             when('/hostQuestionOverview', {
                 templateUrl: 'partials/hostQuestionOverview.html'
@@ -188,5 +188,9 @@ theApp.controller('hostController', function($scope, $http){
                 alert(err);
             })
     }
+
+    $(function() {
+        $( "#accordion" ).accordion();
+    });
 });
 
