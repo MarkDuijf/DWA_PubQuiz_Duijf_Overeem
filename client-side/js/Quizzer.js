@@ -35,7 +35,7 @@ theApp.config(['$routeProvider',
                 //controller: 'hostController'
             }).
             otherwise({
-                redirectTo: 'partials/home.html'
+                redirectTo: '/home'
             });
     }]);
 
