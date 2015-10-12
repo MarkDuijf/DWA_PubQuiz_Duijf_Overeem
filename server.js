@@ -8,10 +8,9 @@ var app = express();
 app.use(bodyParser.json());
 
 var dbName = 'quizzerDB';
-var Room = require('./client-side/models/Room');
+var Room = require('./models/Room');
 
 app.use(express.static(path.join(__dirname, 'client-side')));
-var mongo    = require('mongodb').MongoClient;
 
 
 
@@ -22,7 +21,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
 
     participantRouter.get('/getRooms', function(req, res){
         Room.find({}, function(err, result){
-            console.log(result);
             res.send(result);
         });
     })
