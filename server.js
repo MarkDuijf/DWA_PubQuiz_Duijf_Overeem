@@ -35,12 +35,11 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
 
     participantRouter.post('/joinRoom', function(req, res){
         Room.find({_id: req.body.roomId}, function(err, result){
-            console.log(String(result[0].password));
-            console.log(req.body.roomPass);
-            if(String(result[0].roomPass) == String(req.body.roomPass)) {
+
+            if(result[0].password === req.body.roomPass) {
                 Room.update({_id: req.body.roomId}, {
                     $push: {
-                        Teams: {
+                        teams: {
                             teamName: req.body.teamName,
                             score: 0
                         }
