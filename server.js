@@ -11,9 +11,6 @@ var dbName = 'quizzerDB';
 var Room = require('./client-side/models/Room');
 
 app.use(express.static(path.join(__dirname, 'client-side')));
-var mongo    = require('mongodb').MongoClient;
-
-
 
 mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
 
@@ -35,7 +32,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
         });
     });
 
-    participantRouter
+    //participantRouter
 
     hostRouter.post('/deleteRooms', function(req, res){
         Room.remove(function(){
