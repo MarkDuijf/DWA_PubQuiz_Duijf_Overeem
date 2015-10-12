@@ -141,6 +141,25 @@ theApp.controller('participantController', function($scope, $http){
             })
     }()
 
+    $scope.openModal = function(id){
+        $scope.showModal = true;
+        var header = document.getElementsByClassName('header');
+        header[0].innerHTML = id;
+    }
+
+    $scope.applyToRoom = function(teamName, roomPass){
+        var header = document.getElementsByClassName('header');
+
+       var roomId = header[0].innerHTML;
+        $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: roomId})
+            .success(function(data){
+
+            })
+            .error(function(err, data){
+
+            })
+    }
+
 });
 
 theApp.controller('hostController', function($scope, $http){

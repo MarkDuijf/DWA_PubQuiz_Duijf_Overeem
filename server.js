@@ -20,9 +20,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
     var hostRouter = express.Router();
     var participantRouter  = express.Router();
 
-
-
-
     participantRouter.get('/getRooms', function(req, res){
         Room.find({}, function(err, result){
             console.log(result);
@@ -34,8 +31,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
         console.log(req.body);
         Room.create(req.body, function(err){
             if(err) console.log(err);
+            res.json(req.body);
         });
-         res.json(req.body);
     });
 
     hostRouter.post('/deleteRooms', function(req, res){

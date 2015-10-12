@@ -1,0 +1,49 @@
+/* this code cribbed from http://sldn.softlayer.com/blog/cwolff/Pure-CSS-Modal-Overlays */
+#overlay {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 20%;
+    top: 20%;
+    background-color: #ffffff;
+    width: 60%;
+    height: 70%;
+    z-index: 2010;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 10px 10px 40px 0px rgba(0,0,0,0.75);
+}
+
+#overlay .header {
+    width: 100%;
+    height: 75px;
+    flex: none;
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size:1.3em;
+}
+#overlay .footer {
+    width: 100%;
+    height: 75px;
+    flex: none;
+    padding: 10px;
+    padding-top:20px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.modalContent {
+    flex: auto;
+    overflow: auto;
+    padding: 10px;
+}
+
+#fade {
+    position: absolute;
+    left: 0%;
+    top:  0%;
+    background-color: #444;
+    opacity: .80;
+    width: 100%;
+    height: 110%;
+    z-index: 2000;
+}
