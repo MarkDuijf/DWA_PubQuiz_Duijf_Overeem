@@ -106,7 +106,7 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope, $loca
 
 }]);
 
-theApp.controller('participantController', function($scope, $http){
+theApp.controller('participantController', function($scope, $http, $location){
 
     $scope.answered = false;
     $scope.responseText = document.getElementById('submitResponse');
@@ -168,6 +168,7 @@ theApp.controller('participantController', function($scope, $http){
                 if(data != 'the password was incorrect!') {
                     $scope.closeModal();
                     $scope.getRooms();
+                   // $location.path('hostQuestion');
                 }
             })
             .error(function(err, data){
@@ -177,7 +178,7 @@ theApp.controller('participantController', function($scope, $http){
 
 });
 
-theApp.controller('hostController', function($scope, $http){
+theApp.controller('hostController', function($scope, $http, $location){
     $scope.createRoom = function(){
         console.log('attempt at room creating');
         var sendData = {_id: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1}
@@ -187,12 +188,22 @@ theApp.controller('hostController', function($scope, $http){
             $scope.roomPass  = '';
             $scope.adminPass = '';
             alert('room created!');
+            $location.path('hostQuestion');
          })
          .error(function(data, status){
 
          });
-
     };
+
+    if($location.path() == '/hostQuestion'){
+        $http.get('/host/hostAuthentication')
+            .success(function(data){
+              alert(data);
+            })
+            .error(function(status, data){
+                alert(data + ' ' + status);
+            })
+    }
 
     $scope.deleteRooms = function(){
         $http.post('/host/deleteRooms', {})
