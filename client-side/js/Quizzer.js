@@ -129,6 +129,7 @@ theApp.controller('participantController', function($scope, $http){
 
     $scope.rooms = [];
     $scope.getRooms = function(){
+        $scope.rooms = [];
         $http.get('/participant/getRooms')
             .success(function(data){
                 data.forEach(function (room) {
@@ -139,12 +140,21 @@ theApp.controller('participantController', function($scope, $http){
             .error(function(err, data){
                 console.log(err);
             })
-    }()
+    };
+    $scope.getRooms();
 
-    $scope.openModal = function(id){
+    $scope.openModal = function(id, teams){
         $scope.showModal = true;
+        $scope.teamsInRoom = teams;
         var header = document.getElementsByClassName('header');
         header[0].innerHTML = id;
+    }
+
+    $scope.closeModal = function(){
+        $scope.showModal = false;
+        $scope.teamsInRoom = [];
+        $scope.teamName= '';
+        $scope.password = '';
     }
 
     $scope.applyToRoom = function(teamName, roomPass){
@@ -154,6 +164,11 @@ theApp.controller('participantController', function($scope, $http){
         $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: roomId})
             .success(function(data){
                 alert(data);
+                console.log(data);
+                if(data != 'the password was incorrect!') {
+                    $scope.closeModal();
+                    $scope.getRooms();
+                }
             })
             .error(function(err, data){
                 alert(data);
