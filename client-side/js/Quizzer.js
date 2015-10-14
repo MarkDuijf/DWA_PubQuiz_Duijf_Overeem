@@ -187,8 +187,14 @@ theApp.controller('hostController', function($scope, $http, $location){
             $scope.roomName  = '';
             $scope.roomPass  = '';
             $scope.adminPass = '';
-            alert('room created!');
-            $location.path('hostQuestion');
+            if(data === 'this room name is already taken!')  {
+                alert('this room name is already taken!');
+            }
+            else{
+                alert('room created!');
+                $location.path('hostQuestion');
+            }
+
          })
          .error(function(data, status){
 

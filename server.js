@@ -47,14 +47,23 @@ participantRouter.post('/joinRoom', function(req, res){
 });
 
 hostRouter.post('/addRoom', function(req, res){
-    req.session.host = {
-        isHost: true,
-        roomName: req.body._id
-    };
-    Room.create(req.body, function(err){
-        if(err) console.log(err);
-        res.json(req.body);
+    Room.count({_id: req.body._id}, function(err, result){
+        console.log(result);
+       if(result > 0) {
+           res.send('this room name is already taken!');
+       }
+        else{
+           req.session.host = {
+               isHost: true,
+               roomName: req.body._id
+           };
+           Room.create(req.body, function(err){
+               if(err) console.log(err);
+               res.json(req.body);
+           });
+       }
     });
+
 });
 
 hostRouter.get('/hostAuthentication', function(req, res){
