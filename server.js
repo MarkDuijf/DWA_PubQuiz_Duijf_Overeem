@@ -1,10 +1,16 @@
-var mongoose   = require('mongoose');
-var express    = require('express');
+var mongoose    = require('mongoose');
+var express     = require('express');
 var session     = require('express-session');
-var path       = require('path');
+var path        = require('path');
 var bodyParser  = require('body-parser');
+var http        = require('http');
+var ws          = require('ws');
 
 var app = express();
+var httpServer      = http.createServer(app);
+var theWebSocketServer = new ws.Server({
+    server: httpServer
+});
 
 app.use(bodyParser.json());
 app.use(session({resave: true, saveUninitialized: true, secret: 'ngio24ng24hg57341pngEAG6G13g31'}));
@@ -13,6 +19,11 @@ app.use(session({resave: true, saveUninitialized: true, secret: 'ngio24ng24hg573
 var dbName = 'quizzerDB';
 var Room = require('./models/Room');
 var Question = require('./models/Question');
+
+
+theWebSocketServer.on('connection', function(){
+});
+
 
 
 app.use(express.static(path.join(__dirname, 'client-side')));
@@ -25,7 +36,7 @@ participantRouter.get('/getRooms', function(req, res){
     Room.find({}, function(err, result){
         res.send(result);
     });
-})
+});
 
 participantRouter.post('/joinRoom', function(req, res){
     Room.find({_id: req.body.roomId}, function(err, result){
@@ -75,14 +86,14 @@ hostRouter.get('/hostAuthentication', function(req, res){
         res.status(403);
         res.send('you are not the host!');
     }
-})
+});
 
 hostRouter.post('/deleteRooms', function(req, res){
     Room.remove(function(){
 
     });
     res.send('rooms deleted!');
-})
+});
 
 
 app.use('/host', hostRouter);
@@ -90,5 +101,9 @@ app.use('/participant', participantRouter);
 
 mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
 
-    app.listen(3000);
+    httpServer.listen(3000, function () {
+        console.log('Listening on ' + httpServer.address().port)
+    });
 });
+
+
