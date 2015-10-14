@@ -198,7 +198,7 @@ theApp.controller('hostController', function($scope, $http, $location){
     if($location.path() == '/hostQuestion'){
         $http.get('/host/hostAuthentication')
             .success(function(data){
-              alert(data);
+              console.log(data);
             })
             .error(function(status, data){
                 alert(data + ' ' + status);

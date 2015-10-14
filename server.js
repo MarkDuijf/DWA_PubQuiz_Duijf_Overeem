@@ -47,7 +47,10 @@ participantRouter.post('/joinRoom', function(req, res){
 });
 
 hostRouter.post('/addRoom', function(req, res){
-    req.session.host = true;
+    req.session.host = {
+        isHost: true,
+        roomName: req.body._id
+    };
     Room.create(req.body, function(err){
         if(err) console.log(err);
         res.json(req.body);
@@ -56,7 +59,7 @@ hostRouter.post('/addRoom', function(req, res){
 
 hostRouter.get('/hostAuthentication', function(req, res){
     if(req.session.host){
-        res.send(true);
+        res.send(req.session.host);
     } else {
         res.status(403);
         res.send('you are not the host!');
