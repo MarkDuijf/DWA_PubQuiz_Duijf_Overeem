@@ -180,25 +180,39 @@ theApp.controller('participantController', function($scope, $http, $location){
 
 theApp.controller('hostController', function($scope, $http, $location){
     $scope.createRoom = function(){
-        console.log('attempt at room creating');
-        var sendData = {_id: $scope.roomName, password: $scope.roomPass, teams: [], adminPass: $scope.adminPass, roundNr: 1, questionNr: 1}
-        $http.post('/host/addRoom', sendData)
-         .success(function(data){
-            $scope.roomName  = '';
-            $scope.roomPass  = '';
-            $scope.adminPass = '';
-            if(data === 'this room name is already taken!')  {
-                alert('this room name is already taken!');
+        console.log($scope.roomName);
+        console.log($scope.roomPass);
+        console.log($scope.adminPass);
+        if($scope.roomName != undefined && $scope.roomPass != undefined && $scope.adminPass != undefined) {
+            var sendData = {
+                _id: $scope.roomName,
+                password: $scope.roomPass,
+                teams: [],
+                adminPass: $scope.adminPass,
+                roundNr: 1,
+                questionNr: 1
             }
-            else{
-                alert('room created!');
-                $location.path('hostQuestion');
-            }
+            $http.post('/host/addRoom', sendData)
+                .success(function (data) {
+                    $scope.roomName = '';
+                    $scope.roomPass = '';
+                    $scope.adminPass = '';
+                    if (data === 'this room name is already taken!') {
+                        alert('this room name is already taken!');
+                    }
+                    else {
+                        alert('room created!');
+                        $location.path('hostQuestion');
+                    }
 
-         })
-         .error(function(data, status){
+                })
+                .error(function (data, status) {
 
-         });
+                });
+        }
+        else{
+            alert('please enter all the fields!')
+        }
     };
 
     if($location.path() == '/hostQuestion'){
