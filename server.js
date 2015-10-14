@@ -12,7 +12,7 @@ app.use(session({resave: true, saveUninitialized: true, secret: 'ngio24ng24hg573
 
 var dbName = 'quizzerDB';
 var Room = require('./models/Room');
-var Question = require('/models/Room');
+var Question = require('./models/Question');
 
 
 app.use(express.static(path.join(__dirname, 'client-side')));

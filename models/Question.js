@@ -6,4 +6,4 @@ var questionSchema = new mongoose.Schema({
     category: {type: String, required: true}
 });
 
-module.exports = mongoose.model('Room', questionSchema);
+module.exports = mongoose.model('Question', questionSchema);
