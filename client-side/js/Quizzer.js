@@ -200,7 +200,7 @@ theApp.controller('hostController', function($scope, $http, $location){
             .success(function(data){
               console.log(data);
             })
-            .error(function(status, data){
+            .error(function(data, status){
                 alert(data + ' ' + status);
             })
     }
@@ -213,6 +213,18 @@ theApp.controller('hostController', function($scope, $http, $location){
             .error(function(err, status){
                 alert(err);
             })
+    };
+
+    $scope.selected = false;
+
+    $scope.selectQuestion = function(){
+        $scope.selected = !$scope.selected;
+        console.log($scope.selected)
+        return $scope.selected;
+    };
+
+    $scope.isSelectedQuestion = function(){
+        return $scope.selected;
     }
 
     $(function() {

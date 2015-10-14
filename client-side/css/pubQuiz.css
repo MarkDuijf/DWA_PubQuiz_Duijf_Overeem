@@ -22,6 +22,12 @@ width: 100%;
 
 }
 
+.questionSelected{
+    background-color: #428bca;
+    font-weight: bolder;
+}
+
+
 .questionInfo{
     text-align: center;
 }
