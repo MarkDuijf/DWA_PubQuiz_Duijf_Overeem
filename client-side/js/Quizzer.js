@@ -36,6 +36,10 @@ theApp.config(['$routeProvider',
                 templateUrl: 'partials/hostQuestionOverview.html'
                 //controller: 'hostController'
             }).
+            when('/pendingRoom', {
+                templateUrl: 'partials/pendingRoom.html',
+                controller: 'hostController'
+            }).
             otherwise({
                 redirectTo: '/home'
             });
@@ -86,6 +90,9 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope, $loca
     }, {
         Title: 'pending Question',
         LinkText: 'hostQuestionOverview'
+    }, {
+        Title: 'pending Room',
+        LinkText: 'pendingRoom'
     }];
 
     $scope.currentPage = 'home';
@@ -204,7 +211,7 @@ theApp.controller('hostController', function($scope, $http, $location){
                     }
                     else {
                         alert('room created!');
-                        $location.path('hostQuestion');
+                        $location.path('pendingRoom');
                     }
 
                 })
@@ -217,10 +224,11 @@ theApp.controller('hostController', function($scope, $http, $location){
         }
     };
 
-    if($location.path() == '/hostQuestion'){
+    if($location.path() == '/hostQuestion' || $location.path() == '/pendingRoom'){
         $http.get('/host/hostAuthentication')
             .success(function(data){
               console.log(data);
+                $scope.roomName = data.roomName;
             })
             .error(function(data, status){
                 alert(data + ' ' + status);
