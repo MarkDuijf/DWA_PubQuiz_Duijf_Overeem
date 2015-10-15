@@ -144,7 +144,6 @@ theApp.controller('participantController', function($scope, $http, $location){
                 data.forEach(function (room) {
                     $scope.rooms.push(room);
                 });
-                console.log($scope.rooms);
             })
             .error(function(err, data){
                 console.log(err);
@@ -172,10 +171,10 @@ theApp.controller('participantController', function($scope, $http, $location){
        var roomId = header[0].innerHTML;
         $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: roomId})
             .success(function(data){
-                alert(data);
                 console.log(data);
                 if(data != 'the password was incorrect!') {
                     $scope.closeModal();
+                    sendJoinRequest(data.teamName);
                     $scope.getRooms();
                    // $location.path('hostQuestion');
                 }
@@ -224,10 +223,16 @@ theApp.controller('hostController', function($scope, $http, $location){
         }
     };
 
-    if($location.path() == '/hostQuestion' || $location.path() == '/pendingRoom'){
+    if($location.path() == '/pendingRoom'){
         $http.get('/host/hostAuthentication')
             .success(function(data){
-              console.log(data);
+                $http.post('/host/getRoom', {roomName: data.roomName})
+                    .success(function(data){
+                        //getTeamRequests();
+                    })
+                    .error(function(data, status){
+
+                     })
                 $scope.roomName = data.roomName;
             })
             .error(function(data, status){

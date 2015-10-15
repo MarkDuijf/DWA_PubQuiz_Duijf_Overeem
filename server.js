@@ -21,7 +21,12 @@ var Room = require('./models/Room');
 var Question = require('./models/Question');
 
 
-theWebSocketServer.on('connection', function(){
+theWebSocketServer.on('connection', function(ws){
+
+    ws.on('message', function(message){
+        console.log(message);
+        ws.send(message);
+    })
 });
 
 
@@ -38,6 +43,13 @@ participantRouter.get('/getRooms', function(req, res){
     });
 });
 
+hostRouter.post('/getRoom', function(req, res){
+    Room.findOne({}, function(err, result){
+        res.send(result);
+    });
+
+})
+
 participantRouter.post('/joinRoom', function(req, res){
     Room.find({_id: req.body.roomId}, function(err, result){
 
@@ -50,7 +62,7 @@ participantRouter.post('/joinRoom', function(req, res){
                     }
                 }
             }, {upsert: true}, function (err, data) {
-                res.send('succes!');
+                res.send(req.body);
             })
         }
         else{
