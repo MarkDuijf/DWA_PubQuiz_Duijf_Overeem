@@ -36,13 +36,13 @@ theApp.config(['$routeProvider',
                 templateUrl: 'partials/hostQuestionOverview.html'
                 //controller: 'hostController'
             }).
-            when('/pendingRoom', {
+            when('/pendingRoom/:id', {
                 templateUrl: 'partials/pendingRoom.html',
-                controller: 'hostController'
-            }).
-            otherwise({
-                redirectTo: '/home'
-            });
+                controller: 'hostController'})
+    //        }).
+    //        otherwise({
+    //            redirectTo: '/home'
+    //        });
     }]);
 
 theApp.controller("beamerViewController", function($scope, $location){
@@ -174,7 +174,7 @@ theApp.controller('participantController', function($scope, $http, $location){
                 console.log(data);
                 if(data != 'the password was incorrect!') {
                     $scope.closeModal();
-                    sendJoinRequest(data.teamName);
+                    wsSend(data.teamName);
                     $scope.getRooms();
                    // $location.path('hostQuestion');
                 }
@@ -186,7 +186,7 @@ theApp.controller('participantController', function($scope, $http, $location){
 
 });
 
-theApp.controller('hostController', function($scope, $http, $location){
+theApp.controller('hostController', function($scope, $http, $location, $routeParams){
     $scope.createRoom = function(){
         console.log($scope.roomName);
         console.log($scope.roomPass);
@@ -202,15 +202,12 @@ theApp.controller('hostController', function($scope, $http, $location){
             }
             $http.post('/host/addRoom', sendData)
                 .success(function (data) {
-                    $scope.roomName = '';
-                    $scope.roomPass = '';
-                    $scope.adminPass = '';
                     if (data === 'this room name is already taken!') {
                         alert('this room name is already taken!');
                     }
                     else {
                         alert('room created!');
-                        $location.path('pendingRoom');
+                        $location.path('pendingRoom/' + $scope.roomName);
                     }
 
                 })
@@ -223,12 +220,26 @@ theApp.controller('hostController', function($scope, $http, $location){
         }
     };
 
-    if($location.path() == '/pendingRoom'){
+    if($location.path().indexOf('/pendingRoom') != -1){
         $http.get('/host/hostAuthentication')
             .success(function(data){
+                if(data === 'you are not the host!'){
+                   var adminPass = {
+                       adminPass: prompt('Please enter the admin password'),
+                       roomName: $routeParams.id
+                    };
+                    console.log(adminPass);
+                    $http.post('/host/becomeHost', adminPass)
+                        .success(function(){
+
+                        })
+                        .error(function(){
+
+                        })
+                }
                 $http.post('/host/getRoom', {roomName: data.roomName})
                     .success(function(data){
-                        //getTeamRequests();
+
                     })
                     .error(function(data, status){
 
@@ -254,7 +265,7 @@ theApp.controller('hostController', function($scope, $http, $location){
 
     $scope.selectQuestion = function(){
         $scope.selected = !$scope.selected;
-        console.log($scope.selected)
+        console.log($scope.selected);
         return $scope.selected;
     };
 

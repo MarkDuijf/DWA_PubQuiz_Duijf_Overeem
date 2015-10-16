@@ -24,8 +24,9 @@ var Question = require('./models/Question');
 theWebSocketServer.on('connection', function(ws){
 
     ws.on('message', function(message){
-        console.log(message);
-        ws.send(message);
+        console.log('message received!')
+        session.host.teams.push(message);
+        console.log(session.host.teams);
     })
 });
 
@@ -78,9 +79,10 @@ hostRouter.post('/addRoom', function(req, res){
            res.send('this room name is already taken!');
        }
         else{
-           req.session.host = {
+           session.host = {
                isHost: true,
-               roomName: req.body._id
+               roomName: req.body._id,
+               teams: []
            };
            Room.create(req.body, function(err){
                if(err) console.log(err);
@@ -88,17 +90,32 @@ hostRouter.post('/addRoom', function(req, res){
            });
        }
     });
-
 });
 
 hostRouter.get('/hostAuthentication', function(req, res){
-    if(req.session.host){
-        res.send(req.session.host);
+    if(session.host){
+        res.send(session.host);
     } else {
-        res.status(403);
         res.send('you are not the host!');
     }
 });
+
+hostRouter.post('/becomeHost', function(req,res){
+    Room.find({_id: req.body.roomName}, function(err, result){
+        if(req.body.adminPass === result.adminPass){
+            session.host = {
+                isHost: true,
+                roomName: req.body.roomName,
+                teams: []
+            }
+            res.send('allowed!');
+        }
+        else{
+          res.status(403);
+          res.send('the adminPass was incorrect!');
+        }
+    })
+})
 
 hostRouter.post('/deleteRooms', function(req, res){
     Room.remove(function(){
