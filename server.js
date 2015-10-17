@@ -8,6 +8,7 @@ var ws          = require('ws');
 
 var app = express();
 var httpServer      = http.createServer(app);
+
 var theWebSocketServer = new ws.Server({
     server: httpServer
 });
@@ -22,11 +23,9 @@ var Question = require('./models/Question');
 
 
 theWebSocketServer.on('connection', function(ws){
-
     ws.on('message', function(message){
-        console.log('message received!')
-        session.host.teams.push(message);
-        console.log(session.host.teams);
+        this.room = message;
+        ws.send(this.room);
     })
 });
 
@@ -74,7 +73,6 @@ participantRouter.post('/joinRoom', function(req, res){
 
 hostRouter.post('/addRoom', function(req, res){
     Room.count({_id: req.body._id}, function(err, result){
-        console.log(result);
        if(result > 0) {
            res.send('this room name is already taken!');
        }
@@ -92,16 +90,29 @@ hostRouter.post('/addRoom', function(req, res){
     });
 });
 
-hostRouter.get('/hostAuthentication', function(req, res){
-    if(session.host){
-        res.send(session.host);
-    } else {
-        res.send('you are not the host!');
-    }
+hostRouter.post('/hostAuthentication', function(req, res){
+    Room.count({_id: req.body.roomName}, function(err, result){
+            if(result === 0) {
+            res.status(404);
+            res.send('this room name doesn\'t exist');
+        }
+        else{
+            session.host = {
+                roomName: 1
+            }
+            if (session.host.roomName === req.body.roomName) {
+                res.send('you are the host!: ' + session.host);
+            } else {
+                res.send('you are not the host!');
+            }
+        }
+    })
 });
 
 hostRouter.post('/becomeHost', function(req,res){
-    Room.find({_id: req.body.roomName}, function(err, result){
+    Room.findOne({_id: req.body.roomName}, function(err, result){
+        console.log(req.body.roomName);
+        console.log(result);
         if(req.body.adminPass === result.adminPass){
             session.host = {
                 isHost: true,

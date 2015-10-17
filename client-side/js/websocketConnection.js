@@ -8,9 +8,6 @@ wsConnection.sendJSON = function (data) {
     this.send(JSON.stringify(data));
 };
 
-var getTeamRequests = function(){
-    return teamNameRequest;
-}
 
 wsConnection.onopen = function (eventInfo) {
     console.log("Socket connection is open!");
@@ -19,8 +16,9 @@ wsConnection.onopen = function (eventInfo) {
 var wsSend = function(data){
     wsConnection.send(data);
 };
-
+var messages = [];
 wsConnection.onmessage = function(message){
-    teamNameRequest = message.data;
+    messages.push(message.data);
+    console.log(messages)
 }
 

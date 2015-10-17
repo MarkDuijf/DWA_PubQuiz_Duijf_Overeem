@@ -36,7 +36,7 @@ theApp.config(['$routeProvider',
                 templateUrl: 'partials/hostQuestionOverview.html'
                 //controller: 'hostController'
             }).
-            when('/pendingRoom/:id', {
+            when('/pendingRoom/:id?', {
                 templateUrl: 'partials/pendingRoom.html',
                 controller: 'hostController'})
     //        }).
@@ -163,7 +163,7 @@ theApp.controller('participantController', function($scope, $http, $location){
         $scope.teamsInRoom = [];
         $scope.teamName= '';
         $scope.password = '';
-    }
+    };
 
     $scope.applyToRoom = function(teamName, roomPass){
         var header = document.getElementsByClassName('header');
@@ -171,7 +171,6 @@ theApp.controller('participantController', function($scope, $http, $location){
        var roomId = header[0].innerHTML;
         $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: roomId})
             .success(function(data){
-                console.log(data);
                 if(data != 'the password was incorrect!') {
                     $scope.closeModal();
                     wsSend(data.teamName);
@@ -221,7 +220,12 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
     };
 
     if($location.path().indexOf('/pendingRoom') != -1){
-        $http.get('/host/hostAuthentication')
+        if($routeParams.id == undefined){
+            $routeParams.id = prompt('please enter the room you are trying to connect to');
+        }
+        var currentRoom = {roomName: $routeParams.id}
+        console.log('roomname: ' + $routeParams.id);
+        $http.post('/host/hostAuthentication', currentRoom)
             .success(function(data){
                 if(data === 'you are not the host!'){
                    var adminPass = {
@@ -230,11 +234,13 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                     };
                     console.log(adminPass);
                     $http.post('/host/becomeHost', adminPass)
-                        .success(function(){
-
+                        .success(function(data){
+                            alert(data);
+                            $scope.roomName = $routeParams.id
                         })
-                        .error(function(){
-
+                        .error(function(status, data){
+                            alert(status + ' ' + data);
+                            $location.path("participant");
                         })
                 }
                 $http.post('/host/getRoom', {roomName: data.roomName})
@@ -247,9 +253,11 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                 $scope.roomName = data.roomName;
             })
             .error(function(data, status){
-                alert(data + ' ' + status);
+                alert(status + ' ' + data);
+                $location.path('participant')
             })
     }
+
 
     $scope.deleteRooms = function(){
         $http.post('/host/deleteRooms', {})
