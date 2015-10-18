@@ -115,7 +115,7 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope, $loca
 
 }]);
 
-theApp.controller('participantController', function($scope, $http, $location){
+theApp.controller('participantController', function($scope, $http, $location, $rootScope){
 
     $scope.answered = false;
     $scope.responseText = document.getElementById('submitResponse');
@@ -173,6 +173,7 @@ theApp.controller('participantController', function($scope, $http, $location){
             .success(function(data){
                 if(data != 'the password was incorrect!') {
                     $scope.closeModal();
+                    $rootScope.roomId = data.roomId;
                     wsSend(data.teamName);
                     $scope.getRooms();
                    // $location.path('hostQuestion');
