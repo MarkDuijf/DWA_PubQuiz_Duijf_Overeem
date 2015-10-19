@@ -24,9 +24,14 @@ var Question = require('./models/Question');
 theWebSocketServer.on('connection', function(ws){
     console.log('connected')
         ws.on('message', function (message) {
-            console.log(message.teamName);
-            ws.send(message);
-
+            for(var i = 0; i < theWebSocketServer.clients.length;i++) {
+                var receivedData = JSON.parse(message);
+                if(receivedData.messageType === 'joinRequest'){
+                    console.log('join request received');
+                    var dataToSend = {messageType: 'processRequest', teamName: receivedData.teamName, roomId: receivedData.roomId};
+                    ws.send(JSON.stringify(dataToSend));
+                }
+            }
         })
 });
 
