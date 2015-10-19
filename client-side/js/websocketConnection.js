@@ -14,11 +14,11 @@ wsConnection.onopen = function (eventInfo) {
 };
 
 var wsSend = function(data){
+    console.log(data);
     wsConnection.send(data);
 };
-var messages = [];
+
 wsConnection.onmessage = function(message){
-    messages.push(message.data);
-    console.log(messages)
-}
+    console.log(message.data)
+};
 

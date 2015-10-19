@@ -21,12 +21,13 @@ var dbName = 'quizzerDB';
 var Room = require('./models/Room');
 var Question = require('./models/Question');
 
-
 theWebSocketServer.on('connection', function(ws){
-    ws.on('message', function(message){
-        this.room = message;
-        ws.send(this.room);
-    })
+    console.log('connected')
+        ws.on('message', function (message) {
+            console.log(message.teamName);
+            ws.send(message);
+
+        })
 });
 
 

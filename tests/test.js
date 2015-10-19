@@ -23,18 +23,17 @@ describe('Room', function(){
     it('should create a room', function(done){
         Room.create({_id: 'room1', password: '123', teams: [], adminPass: '123', roundNr: 0, questionNr: 0}, function(err){
             expect(err).to.be.null;
+
+            Room.findOne({}, function(err, result) {
+                expect(result._id).to.exist;
+                expect(result.password).to.exist;
+                expect(result.teams).to.exist;
+                expect(result.adminPass).to.exist;
+                expect(result.roundNr).to.equal(0);
+                expect(result.questionNr).to.equal(0);
+                done();
+            });
         })
-
-        Room.findOne({}, function(err, result) {
-            expect(result._id).to.exist;
-            expect(result.password).to.exist;
-            expect(result.teams).to.exist;
-            expect(result.adminPass).to.exist;
-            expect(result.roundNr).to.equal(0);
-            expect(result.questionNr).to.equal(0);
-            done();
-        });
-
     });
 
     it('should add a team', function(done){

@@ -173,8 +173,7 @@ theApp.controller('participantController', function($scope, $http, $location, $r
             .success(function(data){
                 if(data != 'the password was incorrect!') {
                     $scope.closeModal();
-                    $rootScope.roomId = data.roomId;
-                    wsSend(data.teamName);
+                    wsSend({teamName: data.teamName, roomId: data.roomId, messageType: 'joinRequest'});
                     $scope.getRooms();
                    // $location.path('hostQuestion');
                 }
