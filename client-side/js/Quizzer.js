@@ -36,6 +36,10 @@ theApp.config(['$routeProvider',
                 templateUrl: 'partials/hostQuestionOverview.html'
                 //controller: 'hostController'
             }).
+            when('/waitingScreen', {
+                templateUrl: 'partials/waitingScreen.html',
+                controller: 'participantController'
+            }).
             when('/pendingRoom/:id?', {
                 templateUrl: 'partials/pendingRoom.html',
                 controller: 'hostController'})
@@ -102,7 +106,6 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope, $loca
             $scope.menuItems.forEach(function (menuitem) {
             if (menuitem === menu) {
                 $scope.currentPage = menu.LinkText;
-                console.log($scope.currentPage);
                 return menu.selected;
             }
         });
@@ -119,6 +122,15 @@ theApp.controller('participantController', function($scope, $http, $location, $r
 
     $scope.answered = false;
     $scope.responseText = document.getElementById('submitResponse');
+    console.log('Wacht op acceptance: ' + $scope.waitingAcceptance);
+    console.log('Wacht op start quiz: ' + $scope.waitingStartQuiz);
+    if($scope.waitingStartQuiz === undefined) {
+        $scope.waitingStartQuiz = false;
+    }
+    if ($scope.waitingAcceptance === undefined){
+        $scope.waitingAcceptance = false;
+    }
+
 
     $scope.submitAnswer = function() {
         console.log($scope.answer);
@@ -175,7 +187,11 @@ theApp.controller('participantController', function($scope, $http, $location, $r
                     $scope.closeModal();
                     wsSend({teamName: data.teamName, roomId: data.roomId, messageType: 'joinRequest'});
                     $scope.getRooms();
-                   // $location.path('hostQuestion');
+                    $scope.waitingStartQuiz = false;
+                    $scope.waitingAcceptance = true;
+                    console.log('Na buttonclick: ' + $scope.waitingAcceptance);
+                   $location.path('/waitingScreen');
+
                 }
             })
             .error(function(err, data){

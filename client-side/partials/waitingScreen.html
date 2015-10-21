@@ -1,0 +1,27 @@
+
+<!--Waiting for the host to accept request-->
+<div ng-show="waitingAcceptance">
+    <h1>Waiting for the host to accept your join request</h1>
+    <img src="images/loader.gif">
+
+</div>
+
+
+<!--Waiting for the host to start te quiz-->
+<div ng-show="waitingStartQuiz">
+    <div class="col-lg-10 col-md-9 col-sm-8 col-xs-8">
+        <h3 class="text-success">You have been accepted!</h3>
+        <h1>Waiting for the quiz to start</h1>
+        <img src="images/loader.gif">
+    </div>
+    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4" id="mobileHide">
+        <h2>Teams</h2>
+        <ol>
+            <li ng-repeat="team in teamsInRoom">{{team.teamName}}</li>
+        </ol>
+    </div>
+</div>
+
+<div ng-hide="waitingAcceptance"> Empty</div>
+
+<div></div>
