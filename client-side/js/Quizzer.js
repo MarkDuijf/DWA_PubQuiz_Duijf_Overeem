@@ -123,27 +123,6 @@ theApp.controller("globalController", function($scope){
 });
 
 
-
-theApp.controller("beamerViewController", function($scope, $location){
-    $scope.roomSelected = true;
-
-    $scope.openSpecRoom = function(){
-        //$location.path("/beamerView/" + roomName);
-        $scope.roomSelected = false;
-    };
-
-    $scope.closeSpecRoom = function(){
-        //$location.path("/beamerView/" + roomName);
-        $scope.roomSelected = true;
-    };
-
-    $scope.roomIsSelected = function(){
-        return (roomName != "");
-    }
-
-
-});
-
 theApp.controller('menuControl', ['$scope', '$location', function ($scope, $location) {
 
     $scope.menuItems = [{
@@ -378,6 +357,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
 
 
 theApp.controller('beamerViewController', function($scope, $http, $location, $routeParams){
+    console.log('hai');
     $scope.rooms = [];
     $scope.getRooms = function(){
         $scope.rooms = [];
