@@ -49,6 +49,21 @@ theApp.config(['$routeProvider',
     //        });
     }]);
 
+theApp.controller("globalController", function($scope){
+    $scope.waitingAcceptance = false;
+    $scope.waitingStartQuiz = false;
+
+    $scope.toggleWaitingAcceptance = function(){
+        $scope.waitingAcceptance = !$scope.waitingAcceptance;
+    }
+
+    $scope.toggleWaitStartQuiz = function(){
+        $scope.waitingStartQuiz = !$scope.waitingStartQuiz;
+    }
+});
+
+
+
 theApp.controller("beamerViewController", function($scope, $location){
     $scope.roomSelected = true;
 
@@ -122,15 +137,6 @@ theApp.controller('participantController', function($scope, $http, $location, $r
 
     $scope.answered = false;
     $scope.responseText = document.getElementById('submitResponse');
-    console.log('Wacht op acceptance: ' + $scope.waitingAcceptance);
-    console.log('Wacht op start quiz: ' + $scope.waitingStartQuiz);
-    if($scope.waitingStartQuiz === undefined) {
-        $scope.waitingStartQuiz = false;
-    }
-    if ($scope.waitingAcceptance === undefined){
-        $scope.waitingAcceptance = false;
-    }
-
 
     $scope.submitAnswer = function() {
         console.log($scope.answer);
@@ -187,9 +193,7 @@ theApp.controller('participantController', function($scope, $http, $location, $r
                     $scope.closeModal();
                     wsSend({teamName: data.teamName, roomId: data.roomId, messageType: 'joinRequest'});
                     $scope.getRooms();
-                    $scope.waitingStartQuiz = false;
-                    $scope.waitingAcceptance = true;
-                    console.log('Na buttonclick: ' + $scope.waitingAcceptance);
+                    $scope.toggleWaitingAcceptance();
                    $location.path('/waitingScreen');
 
                 }

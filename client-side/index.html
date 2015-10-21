@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="QuizzerApp">
 <head>
     <title>PubzQwuisz</title>
     <link href="library/bootstrap-3.2.0/css/bootstrap.css" rel="stylesheet"/>
@@ -19,7 +19,7 @@
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 </head>
-<body ng-app="QuizzerApp">
+<body ng-controller="globalController">
 <div class="navbar navbar-default" ng-controller="menuControl" >
     <div ng-repeat="menu in menuItems">
         <a class="navbar-brand" href='#/{{menu.LinkText}}' ng-click="toggleSelected(menu)"
