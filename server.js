@@ -26,7 +26,7 @@ theWebSocketServer.on('connection', function(ws){
         ws.on('message', function (message) {
             for(var i = 0; i < theWebSocketServer.clients.length;i++) {
                 var receivedData = JSON.parse(message);
-                console.log(receivedData);
+                console.log('receivedData: ', receivedData);
                 switch (receivedData.messageType) {
                     case 'joinRequest':
                         if(theWebSocketServer.clients[i] === ws) {
@@ -55,7 +55,7 @@ theWebSocketServer.on('connection', function(ws){
                         }
                     break;
                     case 'acceptTeam':
-                        for(i=0;i<1;i++) {
+                        if(theWebSocketServer.clients[i] === ws) {
                             Room.find({_id: receivedData.roomId}, function (err, result) {
                                 Room.update({_id: receivedData.roomId}, {
                                     $push: {
@@ -66,19 +66,27 @@ theWebSocketServer.on('connection', function(ws){
                                     }
                                 }, {upsert: true}, function (err, data) {
                                     for (var i = 0; i < theWebSocketServer.clients.length; i++) {
-                                        if(theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName){
-                                            console.log('teest')
+                                        if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName) {
                                             var client = theWebSocketServer.clients[i];
-                                            Room.findOne({_id: receivedData.roomId}, function(err, result){
-                                                console.log(result)
-                                                client.send(JSON.stringify({messageType: 'acceptedTeam', teamList: result.teams}))
+                                            Room.findOne({_id: receivedData.roomId}, function (err, result) {
+                                                client.send(JSON.stringify({
+                                                    messageType: 'acceptedTeam',
+                                                    teamList: result.teams
+                                                }))
                                             })
                                         }
                                     }
                                 })
                             });
                         }
-
+                    break;
+                    case 'rejectTeam':
+                        for (var i = 0; i < theWebSocketServer.clients.length; i++) {
+                            if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName) {
+                                theWebSocketServer.clients[i].send(JSON.stringify({messageType: 'rejectedTeam'}))
+                                return;
+                            }
+                        }
                     break;
                 }
             }
@@ -107,7 +115,16 @@ hostRouter.post('/getRoom', function(req, res){
 })
 
 participantRouter.post('/joinRoom', function(req, res){
-    res.send(req.body);
+    Room.findOne({_id: req.body.roomId}, function(err, result){
+        console.log(req.body.roomPass);
+        console.log(result.password);
+        if(req.body.roomPass === result.password){
+            res.send(req.body);
+        }
+        else{
+            res.send('the password was incorrect!');
+        }
+    })
 });
 
 hostRouter.post('/addRoom', function(req, res){

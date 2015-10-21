@@ -49,7 +49,7 @@ theApp.config(['$routeProvider',
     //        });
     }]);
 
-theApp.controller("globalController", function($scope){
+theApp.controller("globalController", function($scope, $location){
     $scope.waitingAcceptance = false;
     $scope.waitingStartQuiz = false;
     $scope.teamJoining = false;
@@ -67,10 +67,6 @@ theApp.controller("globalController", function($scope){
 
     $scope.wsConnection = new WebSocket("ws://localhost:3000");
 // this method is not in the official API, but it's very useful.
-    $scope.wsConnection.sendJSON = function (data) {
-        this.send(JSON.stringify(data));
-    };
-
 
     $scope.wsConnection.onopen = function (eventInfo) {
         console.log("Socket connection is open!");
@@ -92,6 +88,7 @@ theApp.controller("globalController", function($scope){
                 $scope.joiningTeams.push(receivedData.teamName);
 
                 $scope.acceptTeam = function(roomId, teamName){
+                    console.log('acceptTeam executed!');
                     $scope.wsSend({roomId: roomId, teamName: teamName, messageType: 'acceptTeam'});
                     $scope.joinedTeams.push(teamName);
 
@@ -103,19 +100,22 @@ theApp.controller("globalController", function($scope){
                 }
 
                 $scope.rejectTeam = function(roomId, teamName){
-                    for (var i=0; i = $scope.joiningTeams.length; i++){
-                        if ($scope.joiningTeams[i].teamname === teamName){
+                    $scope.wsSend({roomId: roomId, teamName: teamName, messageType: 'rejectTeam'});
+                    for (var i=0; i < $scope.joiningTeams.length; i++){
+                        if ($scope.joiningTeams[i] === teamName){
                             $scope.joiningTeams.splice(i,1);
                         }
                     }
-
                 }
-
             break;
             case 'acceptedTeam':
                 $scope.setWaitStartQuiz(true);
                 $scope.setWaitingAcceptance(false);
                 $scope.teamsInRoom = receivedData.teamList;
+            break;
+            case 'rejectedTeam':
+                console.log('you got rejected!');
+                $location.path('/participant');
             break;
         }
         $scope.$apply();
@@ -211,8 +211,7 @@ theApp.controller('participantController', function($scope, $http, $location, $r
     $scope.openModal = function(id, teams){
         $scope.showModal = true;
         $scope.teamsInRoom = teams;
-        var header = document.getElementsByClassName('header');
-        header[0].innerHTML = id;
+        $scope.roomId = id;
     }
 
     $scope.closeModal = function(){
@@ -223,10 +222,7 @@ theApp.controller('participantController', function($scope, $http, $location, $r
     };
 
     $scope.applyToRoom = function(teamName, roomPass){
-        var header = document.getElementsByClassName('header');
-
-       var roomId = header[0].innerHTML;
-        $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: roomId})
+        $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: $scope.roomId})
             .success(function(data){
                 if(data != 'the password was incorrect!') {
                     $scope.closeModal();
@@ -234,7 +230,9 @@ theApp.controller('participantController', function($scope, $http, $location, $r
                     $scope.getRooms();
                     $scope.setWaitingAcceptance(true);
                    $location.path('/waitingScreen');
-
+                }
+                else{
+                    alert('the password was incorrect!');
                 }
             })
             .error(function(err, data){
