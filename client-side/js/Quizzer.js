@@ -115,6 +115,7 @@ theApp.controller("globalController", function($scope){
             case 'acceptedTeam':
                 $scope.setWaitStartQuiz(true);
                 $scope.setWaitingAcceptance(false);
+                $scope.teamsInRoom = receivedData.teamList;
             break;
         }
         $scope.$apply();

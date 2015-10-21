@@ -65,16 +65,20 @@ theWebSocketServer.on('connection', function(ws){
                                         }
                                     }
                                 }, {upsert: true}, function (err, data) {
-
+                                    for (var i = 0; i < theWebSocketServer.clients.length; i++) {
+                                        if(theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName){
+                                            console.log('teest')
+                                            var client = theWebSocketServer.clients[i];
+                                            Room.findOne({_id: receivedData.roomId}, function(err, result){
+                                                console.log(result)
+                                                client.send(JSON.stringify({messageType: 'acceptedTeam', teamList: result.teams}))
+                                            })
+                                        }
+                                    }
                                 })
                             });
                         }
-                        for (var i = 0; i < theWebSocketServer.clients.length; i++) {
-                            if(theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName){
-                                console.log('teest')
-                                theWebSocketServer.clients[i].send(JSON.stringify({messageType: 'acceptedTeam'}))
-                            }
-                        }
+
                     break;
                 }
             }
