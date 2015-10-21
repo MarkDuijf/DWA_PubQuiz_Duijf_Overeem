@@ -24,12 +24,37 @@ var Question = require('./models/Question');
 theWebSocketServer.on('connection', function(ws){
     console.log('connected')
         ws.on('message', function (message) {
+            console.log('message received');
             for(var i = 0; i < theWebSocketServer.clients.length;i++) {
                 var receivedData = JSON.parse(message);
-                if(receivedData.messageType === 'joinRequest'){
-                    console.log('join request received');
-                    var dataToSend = {messageType: 'processRequest', teamName: receivedData.teamName, roomId: receivedData.roomId};
-                    ws.send(JSON.stringify(dataToSend));
+                switch (receivedData.messageType) {
+                    case 'joinRequest':
+                        if(theWebSocketServer.clients[i] === ws) {
+                            theWebSocketServer.clients[i].role = 'participant';
+                            theWebSocketServer.clients[i].roomId = receivedData.roomId;
+                            console.log(theWebSocketServer.clients[i].role, theWebSocketServer.clients[i].roomId);
+
+                            var dataToSend = {
+                                messageType: 'processRequest',
+                                teamName: receivedData.teamName,
+                                roomId: receivedData.roomId
+                            };
+                            for (var i = 0; i < theWebSocketServer.clients.length; i++) {
+                                console.log('client : ' + i, theWebSocketServer.clients[i].roomId, theWebSocketServer.clients[i].role)
+                                if (theWebSocketServer.clients[i].role === 'host' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
+                                    theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                }
+                            }
+                        }
+                    break;
+                    case 'becomeHost':
+                        if(theWebSocketServer.clients[i] === ws) {
+                            console.log('become host executed')
+                            theWebSocketServer.clients[i].role = 'host';
+                            theWebSocketServer.clients[i].roomId = receivedData.roomId;
+                            console.log(theWebSocketServer.clients[i].role, theWebSocketServer.clients[i].roomId);
+                        }
+                    break;
                 }
             }
         })
@@ -117,8 +142,6 @@ hostRouter.post('/hostAuthentication', function(req, res){
 
 hostRouter.post('/becomeHost', function(req,res){
     Room.findOne({_id: req.body.roomName}, function(err, result){
-        console.log(req.body.roomName);
-        console.log(result);
         if(req.body.adminPass === result.adminPass){
             session.host = {
                 isHost: true,

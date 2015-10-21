@@ -237,6 +237,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                         .success(function(data){
                             alert(data);
                             $scope.roomName = $routeParams.id
+                            wsSend({messageType: 'becomeHost', roomId: $scope.roomName});
                         })
                         .error(function(status, data){
                             alert(status + ' ' + data);
