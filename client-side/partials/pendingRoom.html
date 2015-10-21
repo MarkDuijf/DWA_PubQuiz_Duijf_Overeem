@@ -1,10 +1,10 @@
 <div id="teamRequests" class="col-lg-10 col-md-9 col-sm-8 col-xs-12">
     <h1>Room name: {{roomName}}</h1>
 </div>
-<div ng-show="teamJoining" ng-repeat="teams in joiningTeams">
+<div ng-show="teamJoining" ng-repeat="team in joiningTeams">
     <div class="col-lg-4">
-        {{teams.teamName}} <br>
-        <button class="btn-success" ng-click="acceptTeam(roomName, teams.teamName)">Accept</button>
+        {{team}} <br>
+        <button class="btn-success" ng-click="acceptTeam(roomName, team)">Accept</button>
         <button class="btn-danger" ng-click="rejectTeam()">Reject</button>
     </div>
 </div>
@@ -14,6 +14,6 @@
 <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4" id="mobileHide">
     <h2>Teams</h2>
     <ol class="list-group" >
-        <li ng-repeat="team in joinedTeams">{{team.teamName}}</li>
+        <li ng-repeat="team in joinedTeams">{{team}}</li>
     </ol>
 </div>

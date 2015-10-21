@@ -84,25 +84,19 @@ theApp.controller("globalController", function($scope){
         $scope.wsConnection.send(JSON.stringify(data));
     };
 
-    $scope.acceptTeam = function(roomId, teamName, messageType){
-        console.log('messageReceived');
-
-    }
-
     $scope.wsConnection.onmessage = function(message){
         var receivedData = JSON.parse(message.data);
         switch(receivedData.messageType){
             case 'processRequest':
                 $scope.teamJoining = true;
-                console.log('processRequest received!')
-                var requests = document.getElementById('teamRequests');
-                var teamList = document.getElementById('teamList');
+                $scope.joiningTeams.push(receivedData.teamName);
 
                 $scope.acceptTeam = function(roomId, teamName){
                     $scope.wsSend({roomId: roomId, teamName: teamName, messageType: 'acceptTeam'});
                     $scope.joinedTeams.push(teamName);
-                    for (var i=0; i = $scope.joiningTeams.length; i++){
-                        if ($scope.joiningTeams[i].teamname === teamName){
+
+                    for (var i=0; i < $scope.joiningTeams.length; i++){
+                        if ($scope.joiningTeams[i] === teamName){
                             $scope.joiningTeams.splice(i,1);
                         }
                     }
