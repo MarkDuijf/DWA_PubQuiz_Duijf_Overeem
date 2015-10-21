@@ -29,6 +29,8 @@ wsConnection.onmessage = function(message){
         case 'processRequest':
             console.log('processRequest received!')
             var requests = document.getElementById('teamRequests');
+            var teamList = document.getElementById('teamList');
+
             var request = document.createElement('div');
             request.classList.add('col-lg-3')
             request.classList.add('col-md-4')
@@ -39,10 +41,16 @@ wsConnection.onmessage = function(message){
             accept.addEventListener('click', function(){
                 acceptTeam(receivedData.roomId, receivedData.teamName, 'acceptTeam')
                 request.parentNode.removeChild(request);
+                var teamData = document.createElement('li');
+                teamData.innerHTML = receivedData.teamName;
+                teamList.appendChild(teamData);
             });
             var reject = document.createElement('button');
             reject.classList.add('btn-danger')
             reject.innerHTML = 'Reject';
+            reject.addEventListener('click', function(){
+                request.parentNode.removeChild(request);
+            });
             request.style.textAlign = 'center';
             request.style.border = 'solid 1px black';
             request.innerHTML = '<h1>' + receivedData.teamName + '</h1>';
