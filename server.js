@@ -24,9 +24,9 @@ var Question = require('./models/Question');
 theWebSocketServer.on('connection', function(ws){
     console.log('connected')
         ws.on('message', function (message) {
-            console.log('message received');
             for(var i = 0; i < theWebSocketServer.clients.length;i++) {
                 var receivedData = JSON.parse(message);
+                console.log(receivedData);
                 switch (receivedData.messageType) {
                     case 'joinRequest':
                         if(theWebSocketServer.clients[i] === ws) {
@@ -53,6 +53,22 @@ theWebSocketServer.on('connection', function(ws){
                             theWebSocketServer.clients[i].role = 'host';
                             theWebSocketServer.clients[i].roomId = receivedData.roomId;
                             console.log(theWebSocketServer.clients[i].role, theWebSocketServer.clients[i].roomId);
+                        }
+                    break;
+                    case 'acceptTeam':
+                        for(i=0;i<1;i++) {
+                            Room.find({_id: receivedData.roomId}, function (err, result) {
+                                Room.update({_id: receivedData.roomId}, {
+                                    $push: {
+                                        teams: {
+                                            teamName: receivedData.teamName,
+                                            score: 0
+                                        }
+                                    }
+                                }, {upsert: true}, function (err, data) {
+
+                                })
+                            });
                         }
                     break;
                 }
@@ -82,24 +98,7 @@ hostRouter.post('/getRoom', function(req, res){
 })
 
 participantRouter.post('/joinRoom', function(req, res){
-    Room.find({_id: req.body.roomId}, function(err, result){
-
-        if(result[0].password === req.body.roomPass) {
-            Room.update({_id: req.body.roomId}, {
-                $push: {
-                    teams: {
-                        teamName: req.body.teamName,
-                        score: 0
-                    }
-                }
-            }, {upsert: true}, function (err, data) {
-                res.send(req.body);
-            })
-        }
-        else{
-            res.send('the password was incorrect!');
-        }
-    });
+    res.send(req.body);
 });
 
 hostRouter.post('/addRoom', function(req, res){

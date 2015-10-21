@@ -16,13 +16,14 @@ var wsSend = function(data){
     wsConnection.send(JSON.stringify(data));
 };
 
-acceptTeam = function(roomId, teamName, messageType){
+var acceptTeam = function(roomId, teamName, messageType){
+    console.log('messageReceived');
     wsSend({roomId: roomId, teamName: teamName, messageType: messageType});
 }
 
 wsConnection.onmessage = function(message){
     var receivedData = JSON.parse(message.data);
-    console.log(receivedData);
+    console.log('receivedData: ' + receivedData.roomId);
 
     switch(receivedData.messageType){
         case 'processRequest':
@@ -35,7 +36,10 @@ wsConnection.onmessage = function(message){
             var accept = document.createElement('button');
             accept.innerHTML = 'Accept';
             accept.classList.add('btn-success');
-            accept.setAttribute('ng-click', acceptTeam({roomId: receivedData.roomId, teamName: receivedData.teamName, messageType: 'acceptTeam'}));
+            accept.addEventListener('click', function(){
+                acceptTeam(receivedData.roomId, receivedData.teamName, 'acceptTeam')
+                request.parentNode.removeChild(request);
+            });
             var reject = document.createElement('button');
             reject.classList.add('btn-danger')
             reject.innerHTML = 'Reject';
