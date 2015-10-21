@@ -52,14 +52,79 @@ theApp.config(['$routeProvider',
 theApp.controller("globalController", function($scope){
     $scope.waitingAcceptance = false;
     $scope.waitingStartQuiz = false;
-
-    $scope.toggleWaitingAcceptance = function(){
-        $scope.waitingAcceptance = !$scope.waitingAcceptance;
+    $scope.teamJoining = false;
+    $scope.setWaitingAcceptance = function(boolean){
+        $scope.waitingAcceptance = boolean;
+        console.log('setWaitingAcceptance: ', $scope.waitingAcceptance);
+    }
+    $scope.setWaitStartQuiz = function(boolean){
+        $scope.waitingStartQuiz = boolean;
+        console.log('setWaitStartQuiz: ', $scope.waitingAcceptance);
     }
 
-    $scope.toggleWaitStartQuiz = function(){
-        $scope.waitingStartQuiz = !$scope.waitingStartQuiz;
+    $scope.joiningTeams = [];
+    $scope.joinedTeams = [];
+
+    $scope.wsConnection = new WebSocket("ws://localhost:3000");
+// this method is not in the official API, but it's very useful.
+    $scope.wsConnection.sendJSON = function (data) {
+        this.send(JSON.stringify(data));
+    };
+
+
+    $scope.wsConnection.onopen = function (eventInfo) {
+        console.log("Socket connection is open!");
+    };
+    $scope.wsConnection.onclose = function(eventInfo) {
+        console.log("CONNECTION", eventInfo);
     }
+
+    $scope.wsSend = function(data){
+        console.log("WS SEND", data,$scope.wsConnection )
+        $scope.wsConnection.send(JSON.stringify(data));
+    };
+
+    $scope.acceptTeam = function(roomId, teamName, messageType){
+        console.log('messageReceived');
+
+    }
+
+    $scope.wsConnection.onmessage = function(message){
+        var receivedData = JSON.parse(message.data);
+        switch(receivedData.messageType){
+            case 'processRequest':
+                $scope.teamJoining = true;
+                console.log('processRequest received!')
+                var requests = document.getElementById('teamRequests');
+                var teamList = document.getElementById('teamList');
+
+                $scope.acceptTeam = function(roomId, teamName){
+                    $scope.wsSend({roomId: roomId, teamName: teamName, messageType: 'acceptTeam'});
+                    $scope.joinedTeams.push(teamName);
+                    for (var i=0; i = $scope.joiningTeams.length; i++){
+                        if ($scope.joiningTeams[i].teamname === teamName){
+                            $scope.joiningTeams.splice(i,1);
+                        }
+                    }
+                }
+
+                $scope.rejectTeam = function(roomId, teamName){
+                    for (var i=0; i = $scope.joiningTeams.length; i++){
+                        if ($scope.joiningTeams[i].teamname === teamName){
+                            $scope.joiningTeams.splice(i,1);
+                        }
+                    }
+
+                }
+
+            break;
+            case 'acceptedTeam':
+                $scope.setWaitStartQuiz(true);
+                $scope.setWaitingAcceptance(false);
+            break;
+        }
+        $scope.$apply();
+    };
 });
 
 
@@ -191,9 +256,9 @@ theApp.controller('participantController', function($scope, $http, $location, $r
             .success(function(data){
                 if(data != 'the password was incorrect!') {
                     $scope.closeModal();
-                    wsSend({teamName: data.teamName, roomId: data.roomId, messageType: 'joinRequest'});
+                    $scope.wsSend({teamName: data.teamName, roomId: data.roomId, messageType: 'joinRequest'});
                     $scope.getRooms();
-                    $scope.toggleWaitingAcceptance();
+                    $scope.setWaitingAcceptance(true);
                    $location.path('/waitingScreen');
 
                 }
@@ -257,7 +322,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                         .success(function(data){
                             alert(data);
                             $scope.roomName = $routeParams.id
-                            wsSend({messageType: 'becomeHost', roomId: $scope.roomName});
+                            $scope.wsSend({messageType: 'becomeHost', roomId: $scope.roomName});
                         })
                         .error(function(status, data){
                             alert(status + ' ' + data);

@@ -32,6 +32,8 @@ theWebSocketServer.on('connection', function(ws){
                         if(theWebSocketServer.clients[i] === ws) {
                             theWebSocketServer.clients[i].role = 'participant';
                             theWebSocketServer.clients[i].roomId = receivedData.roomId;
+                            theWebSocketServer.clients[i].teamName = receivedData.teamName;
+
                             console.log(theWebSocketServer.clients[i].role, theWebSocketServer.clients[i].roomId);
 
                             var dataToSend = {
@@ -40,7 +42,6 @@ theWebSocketServer.on('connection', function(ws){
                                 roomId: receivedData.roomId
                             };
                             for (var i = 0; i < theWebSocketServer.clients.length; i++) {
-                                console.log('client : ' + i, theWebSocketServer.clients[i].roomId, theWebSocketServer.clients[i].role)
                                 if (theWebSocketServer.clients[i].role === 'host' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
                                 }
@@ -49,10 +50,8 @@ theWebSocketServer.on('connection', function(ws){
                     break;
                     case 'becomeHost':
                         if(theWebSocketServer.clients[i] === ws) {
-                            console.log('become host executed')
                             theWebSocketServer.clients[i].role = 'host';
                             theWebSocketServer.clients[i].roomId = receivedData.roomId;
-                            console.log(theWebSocketServer.clients[i].role, theWebSocketServer.clients[i].roomId);
                         }
                     break;
                     case 'acceptTeam':
@@ -69,6 +68,12 @@ theWebSocketServer.on('connection', function(ws){
 
                                 })
                             });
+                        }
+                        for (var i = 0; i < theWebSocketServer.clients.length; i++) {
+                            if(theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName){
+                                console.log('teest')
+                                theWebSocketServer.clients[i].send(JSON.stringify({messageType: 'acceptedTeam'}))
+                            }
                         }
                     break;
                 }
