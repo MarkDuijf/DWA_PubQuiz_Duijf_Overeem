@@ -7,19 +7,19 @@
                 <h3 ng-bind="cat1Name"></h3>
                 <div>
                     <ul class="list-group">
-                        <li ng-repeat="question in cat1" class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">{{question.question}}</li>
+                        <li ng-repeat="question in cat1" class="list-group-item" ng-click="selectQuestion(question)" ng-class="{questionSelected: isSelectedQuestion(question)}">{{question.question}}</li>
                     </ul>
                 </div>
                 <h3 ng-bind="cat2Name"></h3>
                 <div>
                     <ul class="list-group">
-                        <li ng-repeat="question in cat2" class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">{{question.question}}</li>
+                        <li ng-repeat="question in cat2" class="list-group-item" ng-click="selectQuestion(question)" ng-class="{questionSelected: isSelectedQuestion(question)}">{{question.question}}</li>
                     </ul>
                 </div>
                 <h3 ng-bind="cat3Name"></h3>
                 <div>
                     <ul class="list-group">
-                        <li ng-repeat="question in cat3" class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">{{question.question}}</li>
+                        <li ng-repeat="question in cat3" class="list-group-item" ng-click="selectQuestion(question)" ng-class="{questionSelected: isSelectedQuestion(question)}">{{question.question}}</li>
                     </ul>
                 </div>
             </div>

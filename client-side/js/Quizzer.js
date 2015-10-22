@@ -207,19 +207,19 @@ theApp.controller("globalController", function($scope, $location, $http){
         return false;
     }
 
-    $scope.hai = "hallo";
     $scope.selectCategories = function(selectedCategories){
-        var allQuestions = $scope.getQuestionInfo('all', function(data){
-            console.log(data);
-            $scope.allQuestions = data;
-            $scope.cat1 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[0]));
-            $scope.cat1Name = $scope.cat1[0].category;
-            $scope.cat2 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[1]));
-            $scope.cat2Name = $scope.cat2[0].category;
-            $scope.cat3 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[2]));
-            $scope.cat3Name = $scope.cat3[0].category;
-            $location.path('hostQuestion');
-        })
+        if(selectedCategories.length === 3) {
+            var allQuestions = $scope.getQuestionInfo('all', function (data) {
+                $scope.allQuestions = data;
+                $scope.cat1 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[0]));
+                $scope.cat1Name = $scope.cat1[0].category;
+                $scope.cat2 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[1]));
+                $scope.cat2Name = $scope.cat2[0].category;
+                $scope.cat3 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[2]));
+                $scope.cat3Name = $scope.cat3[0].category;
+                $location.path('hostQuestion');
+            })
+
         $scope.questionsInCat = function(cat){
             var returnArray = [];
             for(var i = 0;i < $scope.allQuestions.length;i++){
@@ -234,11 +234,18 @@ theApp.controller("globalController", function($scope, $location, $http){
             //console.log()
             for(var i = 0; i < 4; i++) {
                 var randomIndex = Math.floor(Math.random() * questionList.length) + 1;
-                console.log(randomIndex);
-                returnArray.push(questionList[randomIndex]);
-                returnArray.splice(randomIndex, 1);
+                if(returnArray.indexOf(questionList[randomIndex]) > -1) {
+                    i--;
+                }
+                else{
+                    returnArray.push(questionList[randomIndex]);
+                }
             }
             return returnArray;
+        }
+        }
+        else{
+            alert('please select 3 categories!');
         }
     }
 
@@ -449,29 +456,28 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
             })
     };
 
-    $scope.selected = false;
+    $scope.selectedQuestion = '';
 
-    $scope.selectQuestion = function(){
-        $scope.selected = !$scope.selected;
-        console.log($scope.selected);
-        return $scope.selected;
+    $scope.selectQuestion = function(question){
+        $scope.selectedQuestion = question;
     };
 
-    $scope.isSelectedQuestion = function(){
-        return $scope.selected;
+    $scope.isSelectedQuestion = function(question){
+        return $scope.selectedQuestion === question;
     }
 
 
 
     $(function() {
-        $( "#accordion" ).accordion();
-    });
+        $("#accordion").accordion({
 
+            heightStyle: "content"
+
+        });    });
 });
 
 
 theApp.controller('beamerViewController', function($scope, $http, $location, $routeParams){
-    console.log('hai');
     $scope.rooms = [];
     $scope.getRooms = function(){
         $scope.rooms = [];
