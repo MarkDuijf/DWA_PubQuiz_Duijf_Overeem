@@ -96,9 +96,10 @@ theApp.controller("globalController", function($scope, $location, $http){
 
                 $scope.acceptTeam = function(roomId, teamName){
                     console.log('acceptTeam executed!');
-                    $scope.wsSend({roomId: roomId, teamName: teamName, messageType: 'acceptTeam'});
-                    $scope.joinedTeams.push(teamName);
-
+                    $scope.wsSend({roomId: roomId, teamName: teamName, messageType: 'processAcceptTeam'});
+                    if($scope.joinedTeams.length < 6) {
+                        $scope.joinedTeams.push(teamName);
+                    }
                     for (var i=0; i < $scope.joiningTeams.length; i++){
                         if ($scope.joiningTeams[i] === teamName){
                             $scope.joiningTeams.splice(i,1);
@@ -123,6 +124,9 @@ theApp.controller("globalController", function($scope, $location, $http){
             case 'rejectedTeam':
                 console.log('you got rejected!');
                 $location.path('/participant');
+            break;
+            case 'roomFull':
+                alert('your room is full! you can\'t accept more teams');
             break;
         }
         $scope.$apply();

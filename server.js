@@ -54,30 +54,37 @@ theWebSocketServer.on('connection', function(ws){
                             theWebSocketServer.clients[i].roomId = receivedData.roomId;
                         }
                     break;
-                    case 'acceptTeam':
-                        if(theWebSocketServer.clients[i] === ws) {
-                            Room.find({_id: receivedData.roomId}, function (err, result) {
-                                Room.update({_id: receivedData.roomId}, {
-                                    $push: {
-                                        teams: {
-                                            teamName: receivedData.teamName,
-                                            score: 0
-                                        }
-                                    }
-                                }, {upsert: true}, function (err, data) {
-                                    for (var i = 0; i < theWebSocketServer.clients.length; i++) {
-                                        if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName) {
-                                            var client = theWebSocketServer.clients[i];
-                                            Room.findOne({_id: receivedData.roomId}, function (err, result) {
-                                                client.send(JSON.stringify({
-                                                    messageType: 'acceptedTeam',
-                                                    teamList: result.teams
-                                                }))
-                                            })
-                                        }
-                                    }
-                                })
-                            });
+                    case 'processAcceptTeam':
+                        if(theWebSocketServer.clients[i] === ws){
+                            Room.findOne({_id: receivedData.roomId}, function(err, result){
+                                if(result.teams.length < 6){
+                                    Room.find({_id: receivedData.roomId}, function (err, result) {
+                                        Room.update({_id: receivedData.roomId}, {
+                                            $push: {
+                                                teams: {
+                                                    teamName: receivedData.teamName,
+                                                    score: 0
+                                                }
+                                            }
+                                        }, {upsert: true}, function (err, data) {
+                                            for (var i = 0; i < theWebSocketServer.clients.length; i++) {
+                                                if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName) {
+                                                    var client = theWebSocketServer.clients[i];
+                                                    Room.findOne({_id: receivedData.roomId}, function (err, result) {
+                                                        client.send(JSON.stringify({
+                                                            messageType: 'acceptedTeam',
+                                                            teamList: result.teams
+                                                        }))
+                                                    })
+                                                }
+                                            }
+                                        })
+                                    });
+                                }
+                                else{
+                                   ws.send(JSON.stringify({messageType: 'roomFull'}));
+                                }
+                            })
                         }
                     break;
                     case 'rejectTeam':
