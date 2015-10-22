@@ -40,6 +40,10 @@ theApp.config(['$routeProvider',
                 templateUrl: 'partials/waitingScreen.html',
                 controller: 'participantController'
             }).
+            when('/selectCategory', {
+                templateUrl: 'partials/selectCategory.html',
+                controller: 'hostController'
+            }).
             when('/pendingRoom/:id?', {
                 templateUrl: 'partials/pendingRoom.html',
                 controller: 'hostController'})
@@ -54,6 +58,7 @@ theApp.controller("globalController", function($scope, $location, $http){
     $scope.waitingAcceptance = false;
     $scope.waitingStartQuiz = false;
     $scope.teamJoining = false;
+
     $scope.setWaitingAcceptance = function(boolean){
         $scope.waitingAcceptance = boolean;
         console.log('setWaitingAcceptance: ', $scope.waitingAcceptance);
@@ -122,10 +127,10 @@ theApp.controller("globalController", function($scope, $location, $http){
         $scope.$apply();
     };
 
-    $scope.getQuestionInfo = function(detail){
+    $scope.getQuestionInfo = function(detail, cb){
         $scope.info = [];
         $http.get('/global/getQuestions')
-                .success(function(data){
+            .success(function(data){
                 if (detail === 'questions') {
                     for (var i = 0; i < data.length; i++) {
                         $scope.info[i] = data[i].question;
@@ -135,16 +140,13 @@ theApp.controller("globalController", function($scope, $location, $http){
                     for(var i=0; i<data.length; i++){
                         $scope.info[i] = data[i].category;
                     }
-                    console.log($scope.info);
                 }
+                cb($scope.info);
                 })
-                .error(function(){
+            .error(function(){
 
                 });
-        return $scope.info;
-    }
-
-
+    };
 
 });
 
@@ -372,6 +374,28 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
         .error(function(){
             console.log('failed')
         });
+
+    $scope.openCategorySelection = function(){
+        $scope.getQuestionInfo('categories', function(data){
+            $scope.filteredCategoryList = $scope.filterCategories(data);
+            console.log($scope.filteredCategoryList);
+            $location.path('/selectCategory');
+        });
+    };
+
+
+    $scope.filterCategories = function(categoryList){
+        var filteredArray = [];
+        categoryList.forEach(function(category){
+            if(filteredArray.indexOf(category) > -1){
+            }
+            else{
+                filteredArray.push(category);
+            }
+        });
+        console.log(filteredArray);
+        return filteredArray;
+    };
 
 
     $(function() {
