@@ -146,6 +146,11 @@ theApp.controller("globalController", function($scope, $location, $http){
                         $scope.info[i] = data[i].category;
                     }
                 }
+                else if(detail === 'all'){
+                    for(var i=0;i<data.length;i++){
+                        $scope.info[i] = data[i];
+                    }
+                }
                 cb($scope.info);
                 })
             .error(function(){
@@ -200,6 +205,41 @@ theApp.controller("globalController", function($scope, $location, $http){
             }
         }
         return false;
+    }
+
+    $scope.hai = "hallo";
+    $scope.selectCategories = function(selectedCategories){
+        var allQuestions = $scope.getQuestionInfo('all', function(data){
+            console.log(data);
+            $scope.allQuestions = data;
+            $scope.cat1 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[0]));
+            $scope.cat1Name = $scope.cat1[0].category;
+            $scope.cat2 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[1]));
+            $scope.cat2Name = $scope.cat2[0].category;
+            $scope.cat3 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[2]));
+            $scope.cat3Name = $scope.cat3[0].category;
+            $location.path('hostQuestion');
+        })
+        $scope.questionsInCat = function(cat){
+            var returnArray = [];
+            for(var i = 0;i < $scope.allQuestions.length;i++){
+                if($scope.allQuestions[i].category === cat){
+                    returnArray.push($scope.allQuestions[i]);
+                }
+            }
+            return returnArray;
+        }
+        $scope.getRandomQuestions = function(questionList){
+            var returnArray = []
+            //console.log()
+            for(var i = 0; i < 4; i++) {
+                var randomIndex = Math.floor(Math.random() * questionList.length) + 1;
+                console.log(randomIndex);
+                returnArray.push(questionList[randomIndex]);
+                returnArray.splice(randomIndex, 1);
+            }
+            return returnArray;
+        }
     }
 
 });
@@ -421,13 +461,6 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
         return $scope.selected;
     }
 
-    $http.get('http://github.com/sottenad/jService')
-        .success(function(data){
-            console.log(data);
-        })
-        .error(function(){
-            console.log('failed')
-        });
 
 
     $(function() {

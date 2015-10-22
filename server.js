@@ -95,6 +95,16 @@ theWebSocketServer.on('connection', function(ws){
                             }
                         }
                     break;
+                    case "selectedCategories":
+                        console.log('hi!');
+                        if(theWebSocketServer.clients[i] === ws) {
+                                for (var i = 0; i < receivedData.categories.length; i++) {
+                                    Question.find({category: receivedData.categories[i]}, function (err, result) {
+                                        theWebSocketServer.clients[i].send(result);
+                                    })
+                                }
+                        }
+                    break;
                 }
             }
         })

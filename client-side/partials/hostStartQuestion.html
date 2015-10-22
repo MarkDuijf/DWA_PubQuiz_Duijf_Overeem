@@ -1,35 +1,25 @@
 <div class="col-lg-10 col-md-9 col-sm-8 col-xs-12">
-    <h3 class="questionInfo">Round 3</h3>
-    <h3 class="questionInfo">Question 6/12</h3>
-
+    <h3 class="questionInfo">Round 1</h3>
+    <h3 class="questionInfo">Question 1/12</h3>
     <div class="col-lg-10 col-lg-offset-1 text-center">
         <h1>Select next question</h1>
             <div id="accordion">
-                <h3>Catagorie 1</h3>
+                <h3 ng-bind="cat1Name"></h3>
                 <div>
                     <ul class="list-group">
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 1</li>
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 2</li>
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 3</li>
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 4</li>
+                        <li ng-repeat="question in cat1" class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">{{question.question}}</li>
                     </ul>
                 </div>
-                <h3>Catagorie 2</h3>
+                <h3 ng-bind="cat2Name"></h3>
                 <div>
                     <ul class="list-group">
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 1</li>
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 2</li>
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 3</li>
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 4</li>
+                        <li ng-repeat="question in cat2" class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">{{question.question}}</li>
                     </ul>
                 </div>
-                <h3>Catagorie 3</h3>
+                <h3 ng-bind="cat3Name"></h3>
                 <div>
                     <ul class="list-group">
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 1</li>
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 2</li>
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 3</li>
-                        <li class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">Question 4</li>
+                        <li ng-repeat="question in cat3" class="list-group-item" ng-click="selectQuestion()" ng-class="{questionSelected: isSelectedQuestion()}">{{question.question}}</li>
                     </ul>
                 </div>
             </div>
