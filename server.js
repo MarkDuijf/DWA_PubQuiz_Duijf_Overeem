@@ -100,6 +100,7 @@ app.use(express.static(path.join(__dirname, 'client-side')));
 
 var hostRouter = express.Router();
 var participantRouter  = express.Router();
+var globalRouter = express.Router();
 
 participantRouter.get('/getRooms', function(req, res){
     Room.find({}, function(err, result){
@@ -189,9 +190,18 @@ hostRouter.post('/deleteRooms', function(req, res){
     res.send('rooms deleted!');
 });
 
+globalRouter.get('/getQuestions', function(req, res){
+    Question.find({}, function(err, result){
+        res.send(result);
+    });
+});
+
+
+
 
 app.use('/host', hostRouter);
 app.use('/participant', participantRouter);
+app.use('/global', globalRouter);
 
 mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
 
@@ -199,5 +209,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
         console.log('Listening on ' + httpServer.address().port)
     });
 });
+
+
 
 

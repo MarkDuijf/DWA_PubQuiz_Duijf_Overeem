@@ -17,3 +17,9 @@
     <input class="btn-primary" type="submit" value="Create" ng-click="createRoom()">
     <input class="btn-primary" type="submit" value="Delete Rooms" ng-click="deleteRooms()">
 </div>
+
+
+<button ng-click="getQuestionInfo('questions')">question</button>
+<button ng-click="getQuestionInfo('categories')">category</button>
+
+<div ng-repeat="question in info">{{question}}</div>

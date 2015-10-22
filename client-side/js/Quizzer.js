@@ -49,7 +49,8 @@ theApp.config(['$routeProvider',
     //        });
     }]);
 
-theApp.controller("globalController", function($scope, $location){
+
+theApp.controller("globalController", function($scope, $location, $http){
     $scope.waitingAcceptance = false;
     $scope.waitingStartQuiz = false;
     $scope.teamJoining = false;
@@ -120,6 +121,29 @@ theApp.controller("globalController", function($scope, $location){
         }
         $scope.$apply();
     };
+
+    $scope.getQuestionInfo = function(detail){
+        $scope.info = [];
+        $http.get('/global/getQuestions')
+                .success(function(data){
+                if (detail === 'questions') {
+                    for (var i = 0; i < data.length; i++) {
+                        $scope.info[i] = data[i].question;
+                    }
+                }
+                else if (detail === 'categories') {
+                    for(var i=0; i<data.length; i++){
+                        $scope.info[i] = data[i].category;
+                    }
+                    console.log($scope.info);
+                }
+                })
+                .error(function(){
+
+                });
+        return $scope.info;
+    }
+
 
 
 });
@@ -353,24 +377,6 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
     $(function() {
         $( "#accordion" ).accordion();
     });
-
-    $scope.extractCategories = function(questions) {
-        var cats = {};
-        questions.forEach(function(question){
-            question.categories.forEach(function(category){
-                cats[category] = 1;
-            });
-        });
-        return Object.getOwnPropertyNames(cats);
-    };
-
-
-
-    $scope.isSelectedCategory = function(categoryName) {
-        return categoryName === $routeParams.categoryName;
-    };
-
-
 
 });
 
