@@ -174,9 +174,33 @@ theApp.controller("globalController", function($scope, $location, $http){
         return filteredArray;
     };
 
-    $scope.toggleSelectedCategory = function(){
+    $scope.categoriesSelected = [];
+
+    $scope.toggleSelectedCategory = function(category){
+        if ($scope.categoriesSelected.indexOf(category) > -1){
+            for (var p = 0; p < $scope.categoriesSelected.length; p++) {
+                if ($scope.categoriesSelected[p] === category) {
+                    $scope.categoriesSelected.splice(p, 1)
+                }
+            }
+        }
+        else {
+            if ($scope.categoriesSelected.length < 3){
+                $scope.categoriesSelected.push(category);
+            }
+        }
+        console.log($scope.categoriesSelected)
 
     };
+
+    $scope.isSelectedCat = function(category){
+        for (var p = 0; p < $scope.categoriesSelected.length; p++){
+            if ($scope.categoriesSelected[p] === category){
+                return true;
+            }
+        }
+        return false;
+    }
 
 });
 

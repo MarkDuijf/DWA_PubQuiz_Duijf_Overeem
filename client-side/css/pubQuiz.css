@@ -45,3 +45,7 @@ width: 100%;
     background-color: #e2e3ff;
     text-align: center;
 }
+
+.selectedCategory{
+    background-color: #dddddd;
+}
