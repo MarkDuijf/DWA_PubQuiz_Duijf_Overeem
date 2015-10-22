@@ -1,0 +1,3 @@
+<button  ng-repeat="categoryName in extractCategories(questionList)"
+      class="categoryListItem"
+      ng-class="{selected: isSelectedCategory(categoryName)}">{{categoryName}}</button>

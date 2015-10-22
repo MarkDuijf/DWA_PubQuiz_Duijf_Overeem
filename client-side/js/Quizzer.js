@@ -120,6 +120,8 @@ theApp.controller("globalController", function($scope, $location){
         }
         $scope.$apply();
     };
+
+
 });
 
 
@@ -351,6 +353,25 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
     $(function() {
         $( "#accordion" ).accordion();
     });
+
+    $scope.extractCategories = function(questions) {
+        var cats = {};
+        questions.forEach(function(question){
+            question.categories.forEach(function(category){
+                cats[category] = 1;
+            });
+        });
+        return Object.getOwnPropertyNames(cats);
+    };
+
+
+
+    $scope.isSelectedCategory = function(categoryName) {
+        return categoryName === $routeParams.categoryName;
+    };
+
+
+
 });
 
 
