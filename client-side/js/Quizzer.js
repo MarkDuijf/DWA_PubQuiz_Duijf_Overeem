@@ -58,6 +58,7 @@ theApp.controller("globalController", function($scope, $location, $http){
     $scope.waitingAcceptance = false;
     $scope.waitingStartQuiz = false;
     $scope.teamJoining = false;
+    $scope.filteredCategoryList = [];
 
     $scope.setWaitingAcceptance = function(boolean){
         $scope.waitingAcceptance = boolean;
@@ -146,6 +147,31 @@ theApp.controller("globalController", function($scope, $location, $http){
             .error(function(){
 
                 });
+    };
+
+    $scope.openCategorySelection = function(){
+        $scope.getQuestionInfo('categories', function(data){
+            $scope.filteredCategoryList = $scope.filterCategories(data);
+            $location.path('/selectCategory');
+        });
+    };
+
+
+    $scope.filterCategories = function(categoryList){
+        var filteredArray = [];
+        categoryList.forEach(function(category){
+            if(filteredArray.indexOf(category) > -1){
+            }
+            else{
+                filteredArray.push(category);
+            }
+        });
+        console.log(filteredArray);
+        return filteredArray;
+    };
+
+    $scope.toggleSelectedCategory = function(){
+
     };
 
 });
@@ -374,28 +400,6 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
         .error(function(){
             console.log('failed')
         });
-
-    $scope.openCategorySelection = function(){
-        $scope.getQuestionInfo('categories', function(data){
-            $scope.filteredCategoryList = $scope.filterCategories(data);
-            console.log($scope.filteredCategoryList);
-            $location.path('/selectCategory');
-        });
-    };
-
-
-    $scope.filterCategories = function(categoryList){
-        var filteredArray = [];
-        categoryList.forEach(function(category){
-            if(filteredArray.indexOf(category) > -1){
-            }
-            else{
-                filteredArray.push(category);
-            }
-        });
-        console.log(filteredArray);
-        return filteredArray;
-    };
 
 
     $(function() {

@@ -1,7 +1,5 @@
 <div>
-      <div ng-repeat="category in filteredCategoryList">
+      <div ng-repeat="category in filteredCategoryList" ng-click="toggleSelectedCategory(category)" ng-class="{selectedCategory: isSelectedCat(category)} ">
             {{category}}
-            Hallo
       </div>
-      dshfdsfdsf
 </div>
