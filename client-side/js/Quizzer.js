@@ -33,8 +33,8 @@ theApp.config(['$routeProvider',
                 controller: 'hostController'
             }).
             when('/hostQuestionOverview', {
-                templateUrl: 'partials/hostQuestionOverview.html'
-                //controller: 'hostController'
+                templateUrl: 'partials/hostQuestionOverview.html',
+                controller: 'hostController'
             }).
             when('/waitingScreen', {
                 templateUrl: 'partials/waitingScreen.html',
@@ -59,6 +59,10 @@ theApp.controller("globalController", function($scope, $location, $http){
     $scope.waitingStartQuiz = false;
     $scope.teamJoining = false;
     $scope.filteredCategoryList = [];
+
+    $scope.teamsSubmitting = [];
+    $scope.teamsSubmitted = [];
+
 
     $scope.setWaitingAcceptance = function(boolean){
         $scope.waitingAcceptance = boolean;
@@ -259,6 +263,19 @@ theApp.controller("globalController", function($scope, $location, $http){
             .error(function(){
                 console.log("FOUT");
             });
+    };
+
+    $scope.selectQuestion = function(question){
+        $scope.selectedQuestion = question;
+    };
+
+    $scope.isSelectedQuestion = function(question){
+        return $scope.selectedQuestion === question;
+    };
+
+    $scope.openQuestionOverview = function(){
+        $location.path('/hostQuestionOverview');
+        $scope.teamsSubmitting = $scope.currentRoomData.teams;
     };
 
 });

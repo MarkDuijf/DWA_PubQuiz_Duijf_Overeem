@@ -1,6 +1,6 @@
 <div class="col-lg-10 col-md-9 col-sm-8 col-xs-12">
-    <h3 class="questionInfo">Round 1</h3>
-    <h3 class="questionInfo">Question 1/12</h3>
+    <h3 class="questionInfo">Round {{currentRoomData.roundNr}}</h3>
+    <h3 class="questionInfo">Question {{currentRoomData.questionNr}}/12</h3>
     <div class="col-lg-10 col-lg-offset-1 text-center">
         <h1>Select next question</h1>
             <div id="accordion">
@@ -28,13 +28,12 @@
 
     <div class="col-lg-3 col-md-2 col-sm-2 col-xs-2"></div>
 
-    <button class=" btn-primary col-lg-6 col-md-8 col-sm-8 col-xs-8"><br><h1>Start</h1><br><br></button>
+    <button class=" btn-primary col-lg-6 col-md-8 col-sm-8 col-xs-8" ng-click="openQuestionOverview()"><br><h1>Start</h1><br><br></button>
 </div>
 
 <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4" id="mobileHide">
     <h2>Teamscores</h2>
     <ul class="list-group">
         <li class="list-group-item" ng-repeat="team in currentRoomData.teams">{{team.teamName}} - {{team.score}}</li>
-        {{currentRoomData}}
     </ul>
 </div>

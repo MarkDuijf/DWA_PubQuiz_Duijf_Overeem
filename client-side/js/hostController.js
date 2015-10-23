@@ -88,15 +88,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
             })
     };
 
-    $scope.selectedQuestion = '';
 
-    $scope.selectQuestion = function(question){
-        $scope.selectedQuestion = question;
-    };
-
-    $scope.isSelectedQuestion = function(question){
-        return $scope.selectedQuestion === question;
-    }
 
 
 

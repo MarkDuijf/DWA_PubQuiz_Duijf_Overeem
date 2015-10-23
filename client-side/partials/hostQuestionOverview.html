@@ -1,23 +1,19 @@
 <div class="col-lg-10 col-md-9 col-sm-8 col-xs-8">
-<h3 class="questionInfo">Round 3</h3>
-<h3 class="questionInfo">Question 6/12</h3>
-<h3 class="questionInfo"> Which city has the largest population?</h3>
+<h3 class="questionInfo">Round {{currentRoomData.roundNr}}</h3>
+<h3 class="questionInfo">Question {{currentRoomData.questionNr}}/12</h3>
+<h3 class="questionInfo">{{selectedQuestion.question}}</h3>
 
 <div class="col-lg-8 col-lg-offset-2 text-center">
     <h1>Participating teams</h1>
     <div class="col-lg-6">
         <h3>Teams submitted</h3>
         <form name="validateAnswers">
-            <div class="col-lg-12"><input name="{{teamname}}" type="checkbox">"Team name" - "Answer"</div>
-            <div class="col-lg-12"><input name="{{teamname}}" type="checkbox">"Team name" - "Answer"</div>
+            <div class="col-lg-12" ng-repeat="teamSubmit in teamsSubmitted"><input name="{{teamSubmit.teamName}}" type="checkbox">{{teamSubmit.teamName}} - "Answer"</div>
         </form>
     </div>
     <div class="col-lg-6">
-        <h3>Teams waiting</h3>
-        <div class="col-lg-12">"Team name"</div>
-        <div class="col-lg-12">"Team name"</div>
-        <div class="col-lg-12">"Team name"</div>
-        <div class="col-lg-12">"Team name"</div>
+        <h3>Teams answering</h3>
+        <div class="col-lg-12" ng-repeat="teamWaiting in teamsSubmitting">{{teamWaiting.teamName}}</div>
     </div>
 </div>
 
@@ -30,12 +26,6 @@
 <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4">
     <h2>Teamscores</h2>
     <ul class="list-group">
-        <li class="list-group-item">"teamname" - "score"</li>
-        <li class="list-group-item">"teamname" - "score"</li>
-        <li class="list-group-item">"teamname" - "score"</li>
-        <li class="list-group-item">"teamname" - "score"</li>
-        <li class="list-group-item">"teamname" - "score"</li>
-        <li class="list-group-item">"teamname" - "score"</li>
-
+        <li class="list-group-item" ng-repeat="team in currentRoomData.teams">{{team.teamName}} - {{team.score}}</li>
     </ul>
 </div>
