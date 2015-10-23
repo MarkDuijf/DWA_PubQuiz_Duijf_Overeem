@@ -1,4 +1,5 @@
 theApp.controller('hostController', function($scope, $http, $location, $routeParams){
+
     $scope.createRoom = function(){
         console.log($scope.roomName);
         console.log($scope.roomPass);
@@ -51,19 +52,23 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                             alert(data);
                             $scope.roomName = $routeParams.id
                             $scope.wsSend({messageType: 'becomeHost', roomId: $scope.roomName});
+
+                            $http.post('/host/getRoom', {roomName: $scope.roomName})
+                                .success(function(data){
+                                    $scope.currentRoom = data;
+                                    console.log($scope.currentRoom);
+
+                                })
+                                .error(function(data, status){
+
+                                })
                         })
                         .error(function(status, data){
                             alert(status + ' ' + data);
                             $location.path("participant");
                         })
                 }
-                $http.post('/host/getRoom', {roomName: data.roomName})
-                    .success(function(data){
 
-                    })
-                    .error(function(data, status){
-
-                    })
                 $scope.roomName = data.roomName;
             })
             .error(function(data, status){

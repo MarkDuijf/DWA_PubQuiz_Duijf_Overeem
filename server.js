@@ -126,7 +126,8 @@ participantRouter.get('/getRooms', function(req, res){
 });
 
 hostRouter.post('/getRoom', function(req, res){
-    Room.findOne({}, function(err, result){
+    Room.findOne({_id: req.body.roomName}, function(err, result){
+        console.log(req.body.roomName)
         res.send(result);
     });
 
@@ -172,10 +173,11 @@ hostRouter.post('/hostAuthentication', function(req, res){
         }
         else{
             session.host = {
-                roomName: 1
+                isHost: true,
+                roomName: null
             }
             if (session.host.roomName === req.body.roomName) {
-                res.send('you are the host!: ' + session.host);
+                res.send('you are now the host!');
             } else {
                 res.send('you are not the host!');
             }
