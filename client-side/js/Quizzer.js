@@ -132,6 +132,11 @@ theApp.controller("globalController", function($scope, $location, $http){
             case 'roomFull':
                 alert('your room is full! you can\'t accept more teams');
             break;
+            case 'processStartQuestion':
+                console.log('hi');
+                $location.path('/answerQuestion');
+                $scope.theQuestion = receivedData.question;
+            break;
         }
         $scope.$apply();
     };
@@ -276,6 +281,7 @@ theApp.controller("globalController", function($scope, $location, $http){
     $scope.openQuestionOverview = function(){
         $location.path('/hostQuestionOverview');
         $scope.teamsSubmitting = $scope.currentRoomData.teams;
+        $scope.wsSend({messageType: 'questionStart', question: $scope.selectedQuestion.question, roomId: $scope.currentRoomData._id})
     };
 
 });

@@ -105,6 +105,20 @@ theWebSocketServer.on('connection', function(ws){
                                 }
                         }
                     break;
+                    case 'questionStart':
+                        if(theWebSocketServer.clients[i] === ws) {
+                            var dataToSend = {
+                                messageType: 'processStartQuestion',
+                                roomId: receivedData.roomId
+                            }
+                            console.log(dataToSend);
+                            for (var i = 0; i < theWebSocketServer.clients.length; i++) {
+                                if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
+                                    theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                }
+                            }
+                        }
+                    break;
                 }
             }
         })
@@ -230,4 +244,4 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
 
 
 
-
+module.exports = app;
