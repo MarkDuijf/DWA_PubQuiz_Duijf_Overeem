@@ -1,5 +1,7 @@
 theApp.controller('beamerViewController', function($scope, $http, $location, $routeParams){
     $scope.rooms = [];
+    $scope.currentRoom = [];
+
     $scope.getRooms = function(){
         $scope.rooms = [];
         $http.get('/participant/getRooms')
@@ -30,4 +32,14 @@ theApp.controller('beamerViewController', function($scope, $http, $location, $ro
     };
 
     $scope.roomSelected = true;
+
+    $scope.openSpecRoom = function(room){
+        $scope.roomSelected = false;
+        $scope.currentRoom = room;
+    };
+
+    $scope.closeSpecRoom = function(){
+        $scope.roomSelected= true;
+        $scope.currentRoom = [];
+    }
 });

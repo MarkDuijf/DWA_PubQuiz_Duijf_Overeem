@@ -55,8 +55,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
 
                             $http.post('/host/getRoom', {roomName: $scope.roomName})
                                 .success(function(data){
-                                    $scope.currentRoom = data;
-                                    console.log($scope.currentRoom);
+                                    $scope.getRoomInfo({roomName: $routeParams.id});
 
                                 })
                                 .error(function(data, status){
@@ -76,6 +75,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                 $location.path('participant')
             })
     }
+
 
 
     $scope.deleteRooms = function(){

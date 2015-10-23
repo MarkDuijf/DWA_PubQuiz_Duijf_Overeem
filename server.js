@@ -127,7 +127,6 @@ participantRouter.get('/getRooms', function(req, res){
 
 hostRouter.post('/getRoom', function(req, res){
     Room.findOne({_id: req.body.roomName}, function(err, result){
-        console.log(req.body.roomName)
         res.send(result);
     });
 

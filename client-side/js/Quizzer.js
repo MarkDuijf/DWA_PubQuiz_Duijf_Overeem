@@ -249,6 +249,18 @@ theApp.controller("globalController", function($scope, $location, $http){
         }
     }
 
+    //$scope.currentRoomData = [];
+
+    $scope.getRoomInfo = function(room){
+        $http.post('/host/getRoom', room)
+            .success(function(data){
+                $scope.currentRoomData = data;
+            })
+            .error(function(){
+                console.log("FOUT");
+            });
+    };
+
 });
 
 
