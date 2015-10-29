@@ -1,21 +1,22 @@
 theApp.controller('participantController', function($scope, $http, $location, $rootScope){
 
     $scope.answered = false;
-    $scope.responseText = document.getElementById('submitResponse');
 
     $scope.submitAnswer = function() {
-        console.log($scope.answer);
         if($scope.answer != undefined){
             $scope.answered = true;
-            $scope.responseText.innerHTML = '<h4>' + 'Your answer was submitted! You answered: ' +'<b>' +  $scope.answer + '</b>' + '</h4>';
-
-            // $http.post request met het gegeven antwoord, anders verdwijnt hij weer hieronder
-
+            $scope.responseText = 'Your answer was submitted! You answered: '  +  $scope.answer;
+            $scope.wsSend({
+                messageType: 'answeredQuestion',
+                teamName: $scope.teamName,
+                roomId: $scope.roomId,
+                answer: $scope.answer
+            })
             $scope.answer = undefined;
         }
-        else{
+        else {
             $scope.answered = true;
-            $scope.responseText.innerHTML = '<h4>' + 'please answer the question before submitting!' + '</h4>';
+            $scope.responseText = 'please answer the question before submitting!';
         }
     }
 
@@ -37,17 +38,19 @@ theApp.controller('participantController', function($scope, $http, $location, $r
     $scope.openModal = function(id, teams){
         $scope.showModal = true;
         $scope.teamsInRoom = teams;
-        $scope.roomId = id;
+        $rootScope.roomId = id
+        console.log($scope.roomId);
     }
 
     $scope.closeModal = function(){
         $scope.showModal = false;
         $scope.teamsInRoom = [];
-        $scope.teamName= '';
+        $scope.teamName = ''
         $scope.password = '';
     };
 
     $scope.applyToRoom = function(teamName, roomPass){
+        $rootScope.teamName = teamName;
         $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: $scope.roomId})
             .success(function(data){
                 if(data != 'the password was incorrect!') {

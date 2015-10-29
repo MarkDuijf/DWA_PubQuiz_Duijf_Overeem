@@ -44,6 +44,10 @@ theApp.config(['$routeProvider',
                 templateUrl: 'partials/selectCategory.html',
                 controller: 'hostController'
             }).
+            when('/answerQuestion', {
+                templateUrl: '/partials/answerQuestion.html',
+                controller: 'participantController'
+            }).
             when('/pendingRoom/:id?', {
                 templateUrl: 'partials/pendingRoom.html',
                 controller: 'hostController'})
@@ -66,11 +70,9 @@ theApp.controller("globalController", function($scope, $location, $http){
 
     $scope.setWaitingAcceptance = function(boolean){
         $scope.waitingAcceptance = boolean;
-        console.log('setWaitingAcceptance: ', $scope.waitingAcceptance);
     }
     $scope.setWaitStartQuiz = function(boolean){
         $scope.waitingStartQuiz = boolean;
-        console.log('setWaitStartQuiz: ', $scope.waitingAcceptance);
     }
 
     $scope.joiningTeams = [];
@@ -94,12 +96,14 @@ theApp.controller("globalController", function($scope, $location, $http){
     $scope.wsConnection.onmessage = function(message){
         var receivedData = JSON.parse(message.data);
         switch(receivedData.messageType){
+            case 'hostAccept':
+                $scope.roomName = receivedData.roomId
+            break;
             case 'processRequest':
                 $scope.teamJoining = true;
                 $scope.joiningTeams.push(receivedData.teamName);
 
                 $scope.acceptTeam = function(roomId, teamName){
-                    console.log('acceptTeam executed!');
                     $scope.wsSend({roomId: roomId, teamName: teamName, messageType: 'processAcceptTeam'});
                     if($scope.joinedTeams.length < 6) {
                         $scope.joinedTeams.push(teamName);
@@ -133,9 +137,17 @@ theApp.controller("globalController", function($scope, $location, $http){
                 alert('your room is full! you can\'t accept more teams');
             break;
             case 'processStartQuestion':
-                console.log('hi');
                 $location.path('/answerQuestion');
                 $scope.theQuestion = receivedData.question;
+            break;
+            case 'teamAnswer':
+                console.log('teamName:', receivedData.teamName, 'answer:', receivedData.answer);
+                $scope.teamsSubmitted.push({teamName: receivedData.teamName, answer: receivedData.answer})
+                for(var i = 0;i<$scope.teamsSubmitting.length;i++){
+                    if($scope.teamsSubmitting[i].teamName === receivedData.teamName){
+                        $scope.teamsSubmitting.splice(i,1);
+                    }
+                }
             break;
         }
         $scope.$apply();
@@ -168,6 +180,13 @@ theApp.controller("globalController", function($scope, $location, $http){
     };
 
     $scope.openCategorySelection = function(){
+        $http.post('/host/getRoom', {roomName: $scope.roomName})
+            .success(function(data){
+                $scope.getRoomInfo({roomName: $scope.roomName});
+            })
+            .error(function(data, status){
+
+            })
         $scope.getQuestionInfo('categories', function(data){
             $scope.filteredCategoryList = $scope.filterCategories(data);
             $location.path('/selectCategory');
@@ -184,7 +203,6 @@ theApp.controller("globalController", function($scope, $location, $http){
                 filteredArray.push(category);
             }
         });
-        console.log(filteredArray);
         return filteredArray;
     };
 
@@ -203,8 +221,6 @@ theApp.controller("globalController", function($scope, $location, $http){
                 $scope.categoriesSelected.push(category);
             }
         }
-        console.log($scope.categoriesSelected)
-
     };
 
     $scope.isSelectedCat = function(category){
@@ -240,7 +256,7 @@ theApp.controller("globalController", function($scope, $location, $http){
         }
         $scope.getRandomQuestions = function(questionList){
             var returnArray = []
-            //console.log()
+
             for(var i = 0; i < 4; i++) {
                 var randomIndex = Math.floor(Math.random() * questionList.length) + 1;
                 if(returnArray.indexOf(questionList[randomIndex]) > -1) {
@@ -265,8 +281,8 @@ theApp.controller("globalController", function($scope, $location, $http){
             .success(function(data){
                 $scope.currentRoomData = data;
             })
-            .error(function(){
-                console.log("FOUT");
+            .error(function(status, data){
+                console.log("error");
             });
     };
 

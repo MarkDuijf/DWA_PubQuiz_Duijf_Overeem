@@ -52,6 +52,15 @@ theWebSocketServer.on('connection', function(ws){
                         if(theWebSocketServer.clients[i] === ws) {
                             theWebSocketServer.clients[i].role = 'host';
                             theWebSocketServer.clients[i].roomId = receivedData.roomId;
+                            var sendData = {
+                                roomId: receivedData.roomId,
+                                messageType: 'hostAccept'
+                            }
+                            for(var i = 0; i < theWebSocketServer.clients.length;i++){
+                                if(theWebSocketServer.clients[i].role === 'host' && theWebSocketServer.clients[i].roomId === receivedData.roomId){
+                                    theWebSocketServer.clients[i].send(JSON.stringify(sendData));
+                                }
+                            }
                         }
                     break;
                     case 'processAcceptTeam':
@@ -109,7 +118,8 @@ theWebSocketServer.on('connection', function(ws){
                         if(theWebSocketServer.clients[i] === ws) {
                             var dataToSend = {
                                 messageType: 'processStartQuestion',
-                                roomId: receivedData.roomId
+                                roomId: receivedData.roomId,
+                                question: receivedData.question
                             }
                             console.log(dataToSend);
                             for (var i = 0; i < theWebSocketServer.clients.length; i++) {
@@ -119,6 +129,21 @@ theWebSocketServer.on('connection', function(ws){
                             }
                         }
                     break;
+                    case 'answeredQuestion':
+                        if(theWebSocketServer.clients[i] === ws){
+                            var dataToSend = {
+                                messageType: 'teamAnswer',
+                                answer: receivedData.answer,
+                                teamName: receivedData.teamName,
+                                roomId: receivedData.roomId
+                            }
+                            for(var j = 0; j < theWebSocketServer.clients.length;j++){
+                                if(theWebSocketServer.clients[j].role === 'host' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
+                                    theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
+                                }
+                            }
+                        }
+                    break
                 }
             }
         })

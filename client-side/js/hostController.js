@@ -52,15 +52,6 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                             alert(data);
                             $scope.roomName = $routeParams.id
                             $scope.wsSend({messageType: 'becomeHost', roomId: $scope.roomName});
-
-                            $http.post('/host/getRoom', {roomName: $scope.roomName})
-                                .success(function(data){
-                                    $scope.getRoomInfo({roomName: $routeParams.id});
-
-                                })
-                                .error(function(data, status){
-
-                                })
                         })
                         .error(function(status, data){
                             alert(status + ' ' + data);
