@@ -49,3 +49,8 @@ width: 100%;
 .selectedCategory{
     background-color: #dddddd;
 }
+
+.correctAnswer{
+    border: solid black 1px;
+    background-color: mediumspringgreen;
+}

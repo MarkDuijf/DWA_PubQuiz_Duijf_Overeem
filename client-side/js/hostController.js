@@ -78,15 +78,42 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                 alert(err);
             })
     };
+    $scope.correctAnswers = [];
 
+    $scope.toggleCorrectAnswer = function(answer){
+        if ($scope.correctAnswers.indexOf(answer) > -1){
+            for (var p = 0; p < $scope.correctAnswers.length; p++) {
+                if ($scope.correctAnswers[p] === answer) {
+                    $scope.correctAnswers.splice(p, 1)
+                }
+            }
+        }
+        else {
+            if ($scope.correctAnswers.length < 3){
+                $scope.correctAnswers.push(answer);
+            }
+        }
+    }
 
-
-
+    $scope.isCorrectAnswer = function(answer){
+        for (var p = 0; p < $scope.correctAnswers.length; p++){
+            if ($scope.correctAnswers[p] === answer){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    $scope.endQuestion = function(){
+        $scope.wsSend({
+            messageType: 'endQuestion',
+            roomId: $scope.roomName
+        })
+    }
 
     $(function() {
         $("#accordion").accordion({
-
             heightStyle: "content"
-
-        });    });
+        });
+    });
 });

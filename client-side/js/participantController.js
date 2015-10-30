@@ -1,6 +1,8 @@
 theApp.controller('participantController', function($scope, $http, $location, $rootScope){
 
     $scope.answered = false;
+    $scope.answer = '';
+    $scope.responseText = '';
 
     $scope.submitAnswer = function() {
         if($scope.answer != undefined){

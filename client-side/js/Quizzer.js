@@ -149,6 +149,16 @@ theApp.controller("globalController", function($scope, $location, $http){
                     }
                 }
             break;
+            case 'endQuestionParticipant':
+                $location.path('/waitingScreen');
+            break;
+            case 'endQuestionHost':
+                $scope.teamsSubmitted = [];
+                console.log($scope.currentRoomData._id)
+                $scope.getRoomInfo({roomName: $scope.currentRoomData._id});
+                $scope.teamsSubmitting = $scope.currentRoomData.teams;
+                $scope.selectCategories($scope.selectedCategories);
+            break;
         }
         $scope.$apply();
     };
@@ -233,6 +243,7 @@ theApp.controller("globalController", function($scope, $location, $http){
     }
 
     $scope.selectCategories = function(selectedCategories){
+        $scope.selectedCategories = selectedCategories;
         if(selectedCategories.length === 3) {
             var allQuestions = $scope.getQuestionInfo('all', function (data) {
                 $scope.allQuestions = data;
@@ -274,12 +285,13 @@ theApp.controller("globalController", function($scope, $location, $http){
         }
     }
 
-    //$scope.currentRoomData = [];
+    $scope.currentRoomData = [];
 
     $scope.getRoomInfo = function(room){
         $http.post('/host/getRoom', room)
             .success(function(data){
                 $scope.currentRoomData = data;
+                console.log($scope.currentRoomData);
             })
             .error(function(status, data){
                 console.log("error");
