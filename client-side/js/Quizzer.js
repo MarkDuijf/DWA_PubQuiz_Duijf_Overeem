@@ -58,7 +58,7 @@ theApp.config(['$routeProvider',
     }]);
 
 
-theApp.controller("globalController", function($scope, $location, $http){
+theApp.controller("globalController", function($scope, $location, $http, $rootScope){
     $scope.waitingAcceptance = false;
     $scope.waitingStartQuiz = false;
     $scope.teamJoining = false;
@@ -125,6 +125,7 @@ theApp.controller("globalController", function($scope, $location, $http){
                 }
             break;
             case 'acceptedTeam':
+                $scope.getRoomInfo({roomName: $rootScope.roomId});
                 $scope.setWaitStartQuiz(true);
                 $scope.setWaitingAcceptance(false);
                 $scope.teamsInRoom = receivedData.teamList;
@@ -137,6 +138,7 @@ theApp.controller("globalController", function($scope, $location, $http){
                 alert('your room is full! you can\'t accept more teams');
             break;
             case 'processStartQuestion':
+
                 $location.path('/answerQuestion');
                 $scope.theQuestion = receivedData.question;
             break;
@@ -145,7 +147,7 @@ theApp.controller("globalController", function($scope, $location, $http){
                 $scope.teamsSubmitted.push({teamName: receivedData.teamName, answer: receivedData.answer})
                 for(var i = 0;i<$scope.teamsSubmitting.length;i++){
                     if($scope.teamsSubmitting[i].teamName === receivedData.teamName){
-                        $scope.teamsSubmitting.splice(i,1);
+                       $scope.teamsSubmitting.splice(i,1);
                     }
                 }
             break;
@@ -154,10 +156,14 @@ theApp.controller("globalController", function($scope, $location, $http){
             break;
             case 'endQuestionHost':
                 $scope.teamsSubmitted = [];
-                console.log($scope.currentRoomData._id)
                 $scope.getRoomInfo({roomName: $scope.currentRoomData._id});
                 $scope.teamsSubmitting = $scope.currentRoomData.teams;
                 $scope.selectCategories($scope.selectedCategories);
+            break;
+            case 'endRoundHost':
+                $scope.getRoomInfo({roomName: $scope.currentRoomData._id});
+                $scope.categoriesSelected = [];
+                $scope.openCategorySelection();
             break;
         }
         $scope.$apply();
@@ -190,13 +196,7 @@ theApp.controller("globalController", function($scope, $location, $http){
     };
 
     $scope.openCategorySelection = function(){
-        $http.post('/host/getRoom', {roomName: $scope.roomName})
-            .success(function(data){
-                $scope.getRoomInfo({roomName: $scope.roomName});
-            })
-            .error(function(data, status){
-
-            })
+        $scope.getRoomInfo({roomName: $scope.roomName});
         $scope.getQuestionInfo('categories', function(data){
             $scope.filteredCategoryList = $scope.filterCategories(data);
             $location.path('/selectCategory');
@@ -253,6 +253,7 @@ theApp.controller("globalController", function($scope, $location, $http){
                 $scope.cat2Name = $scope.cat2[0].category;
                 $scope.cat3 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[2]));
                 $scope.cat3Name = $scope.cat3[0].category;
+                $scope.teamScores = $scope.currentRoomData.teams
                 $location.path('hostQuestion');
             })
 
@@ -286,12 +287,10 @@ theApp.controller("globalController", function($scope, $location, $http){
     }
 
     $scope.currentRoomData = [];
-
     $scope.getRoomInfo = function(room){
         $http.post('/host/getRoom', room)
             .success(function(data){
                 $scope.currentRoomData = data;
-                console.log($scope.currentRoomData);
             })
             .error(function(status, data){
                 console.log("error");
@@ -311,6 +310,18 @@ theApp.controller("globalController", function($scope, $location, $http){
         $scope.teamsSubmitting = $scope.currentRoomData.teams;
         $scope.wsSend({messageType: 'questionStart', question: $scope.selectedQuestion.question, roomId: $scope.currentRoomData._id})
     };
+
+    $scope.updateScores = function(answers){
+        console.log("teamScores: ", $scope.teamScores);
+        console.log("answers: ", answers);
+        for(var j = 0;j<answers.length;j++){
+            for(var i = 0;i<$scope.teamScores.length;i++){
+                if($scope.teamScores[i].teamName === answers[j].teamName){
+                    $scope.teamScores[i].score += 1;
+                }
+            }
+        }
+    }
 
 });
 

@@ -146,20 +146,37 @@ theWebSocketServer.on('connection', function(ws){
                     break;
                     case 'endQuestion':
                         if(ws === theWebSocketServer.clients[i]){
-                            for(var j = 0; j<theWebSocketServer.clients.length;j++){
-                                if(theWebSocketServer.clients[j].role === 'participant' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
-                                    var dataToSend = {
-                                        messageType: 'endQuestionParticipant'
+                            Room.update({_id: receivedData.roomId}, {
+                                $inc: {questionNr: 1}
+                            }, {upsert: true}, function (err, data) {})
+                            Room.findOne({_id: receivedData.roomId}, function(err, result){
+
+                                for(var j = 0; j<theWebSocketServer.clients.length;j++){
+                                    if(theWebSocketServer.clients[j].role === 'participant' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
+                                        var dataToSend = {
+                                            messageType: 'endQuestionParticipant'
+                                        }
+                                        theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                     }
-                                    theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
-                                }
-                                else if(theWebSocketServer.clients[j].role === 'host' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
-                                    var dataToSend = {
-                                        messageType: 'endQuestionHost'
+                                    else if(theWebSocketServer.clients[j].role === 'host' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
+                                        if(result.questionNr < 12) {
+                                            var dataToSend = {
+                                                messageType: 'endQuestionHost'
+                                            }
+                                            theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
+                                        }
+                                        else{
+                                            Room.update({_id: receivedData.roomId}, {
+                                                $inc: {roundNr: 1}, $set: {questionNr: 1}
+                                            }, {upsert: true}, function(err, data){})
+                                            var dataToSend = {
+                                                messageType: 'endRoundHost'
+                                            }
+                                            theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
+                                        }
                                     }
-                                    theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                 }
-                            }
+                            })
                         }
                     break;
                 }

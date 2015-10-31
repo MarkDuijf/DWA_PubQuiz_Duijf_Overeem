@@ -47,7 +47,7 @@ theApp.controller('participantController', function($scope, $http, $location, $r
     $scope.closeModal = function(){
         $scope.showModal = false;
         $scope.teamsInRoom = [];
-        $scope.teamName = ''
+        $scope.teamName = '';
         $scope.password = '';
     };
 
