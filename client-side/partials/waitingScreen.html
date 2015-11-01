@@ -23,4 +23,28 @@
 </div>
 
 
-<div></div>
+<div ng-show="waitingNextQuestion">
+    <div class="col-lg-10 col-md-9 col-sm-8 col-xs-8">
+        <h1>Waiting for the next question to start</h1>
+        <img src="images/loader.gif">
+    </div>
+    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4" id="mobileHide">
+        <h2>Teams</h2>
+        <ul>
+            <li ng-repeat="team in teamsInRoom">{{team.teamName}} - {{team.score}}</li>
+        </ul>
+    </div>
+</div>
+
+<div ng-show="waitingNextRound">
+    <div class="col-lg-10 col-md-9 col-sm-8 col-xs-8">
+        <h1>Waiting for the next round to start</h1>
+        <img src="images/loader.gif">
+    </div>
+    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4" id="mobileHide">
+        <h2>Teams</h2>
+        <ul>
+            <li ng-repeat="team in teamsInRoom">{{team.teamName}} - {{team.score}}</li>
+        </ul>
+    </div>
+</div>

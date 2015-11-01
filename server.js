@@ -22,19 +22,40 @@ var Room = require('./models/Room');
 var Question = require('./models/Question');
 
 theWebSocketServer.on('connection', function(ws){
-    console.log('connected')
+    console.log('connected');
         ws.on('message', function (message) {
+            var receivedData = JSON.parse(message);
+            console.log('receivedData: ', receivedData);
             for(var i = 0; i < theWebSocketServer.clients.length;i++) {
-                var receivedData = JSON.parse(message);
-                console.log('receivedData: ', receivedData);
                 switch (receivedData.messageType) {
+                    case 'spectateRequest':
+                        if(theWebSocketServer.clients[i] === ws) {
+                            theWebSocketServer.clients[i].role = 'spectator';
+                            theWebSocketServer.clients[i].roomId = receivedData.room._id;
+                            theWebSocketServer.clients[i].questionNr = receivedData.room.questionNr;
+                            theWebSocketServer.clients[i].roundNr = receivedData.room.roundNr;
+                            theWebSocketServer.clients[i].question = receivedData.room.question;
+
+
+                            var dataToSend = {
+                                messageType: 'spectatorAccept',
+                                questionNr: receivedData.room.questionNr,
+                                roundNr: receivedData.room.roundNr
+                            };
+
+                            for (var i = 0; i < theWebSocketServer.clients.length; i++) {
+                                if (theWebSocketServer.clients[i].role === 'spectator' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
+                                    theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                }
+                            }
+
+                        }
+                    break;
                     case 'joinRequest':
                         if(theWebSocketServer.clients[i] === ws) {
                             theWebSocketServer.clients[i].role = 'participant';
                             theWebSocketServer.clients[i].roomId = receivedData.roomId;
                             theWebSocketServer.clients[i].teamName = receivedData.teamName;
-
-                            console.log(theWebSocketServer.clients[i].role, theWebSocketServer.clients[i].roomId);
 
                             var dataToSend = {
                                 messageType: 'processRequest',
@@ -105,7 +126,6 @@ theWebSocketServer.on('connection', function(ws){
                         }
                     break;
                     case "selectedCategories":
-                        console.log('hi!');
                         if(theWebSocketServer.clients[i] === ws) {
                                 for (var i = 0; i < receivedData.categories.length; i++) {
                                     Question.find({category: receivedData.categories[i]}, function (err, result) {
@@ -115,16 +135,34 @@ theWebSocketServer.on('connection', function(ws){
                         }
                     break;
                     case 'questionStart':
-                        if(theWebSocketServer.clients[i] === ws) {
+                        if (theWebSocketServer.clients[i] === ws) {
                             var dataToSend = {
                                 messageType: 'processStartQuestion',
-                                roomId: receivedData.roomId,
+                                roomId: receivedData.roomId._id,
                                 question: receivedData.question
                             }
-                            console.log(dataToSend);
                             for (var i = 0; i < theWebSocketServer.clients.length; i++) {
-                                if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
+                                if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId._id) {
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                }
+                                else if (theWebSocketServer.clients[i].role === 'spectator') {
+                                    if (receivedData.roomId.roundNr <= 12) {
+                                        var dataToSend = {
+                                            messageType: 'openQuestionSpectator',
+                                            roundNr: receivedData.roomId.roundNr,
+                                            questionNr: receivedData.roomId.questionNr,
+                                            question: receivedData.question
+                                        };
+                                        theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                    }
+                                    else {
+                                        var dataToSend = {
+                                            messageType: 'endRoundSpectator',
+                                            roundNr: receivedData.roundNr,
+                                            questionNr: receivedData.questionNr
+                                        };
+                                        theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                    }
                                 }
                             }
                         }
@@ -155,14 +193,14 @@ theWebSocketServer.on('connection', function(ws){
                                     if(theWebSocketServer.clients[j].role === 'participant' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
                                         var dataToSend = {
                                             messageType: 'endQuestionParticipant'
-                                        }
+                                        };
                                         theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                     }
                                     else if(theWebSocketServer.clients[j].role === 'host' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
-                                        if(result.questionNr < 12) {
+                                        if(result.questionNr <= 12) {
                                             var dataToSend = {
                                                 messageType: 'endQuestionHost'
-                                            }
+                                            };
                                             theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                         }
                                         else{
@@ -171,7 +209,7 @@ theWebSocketServer.on('connection', function(ws){
                                             }, {upsert: true}, function(err, data){})
                                             var dataToSend = {
                                                 messageType: 'endRoundHost'
-                                            }
+                                            };
                                             theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                         }
                                     }
@@ -208,8 +246,6 @@ hostRouter.post('/getRoom', function(req, res){
 
 participantRouter.post('/joinRoom', function(req, res){
     Room.findOne({_id: req.body.roomId}, function(err, result){
-        console.log(req.body.roomPass);
-        console.log(result.password);
         if(req.body.roomPass === result.password){
             res.send(req.body);
         }
