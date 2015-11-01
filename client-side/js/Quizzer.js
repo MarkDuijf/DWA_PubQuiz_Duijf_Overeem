@@ -196,6 +196,10 @@ theApp.controller("globalController", function($scope, $location, $http, $rootSc
                     }
                 }
             break;
+            case 'openQuestionParticipant':
+                $scope.currentRoomData = receivedData;
+                $scope.teamRoundScores = receivedData.teamRoundScores;
+            break;
             case 'endQuestionParticipant':
                 $scope.setWaitStartQuiz(false);
                 $scope.setWaitingNextQuestion(true);

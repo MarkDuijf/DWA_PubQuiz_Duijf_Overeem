@@ -102,7 +102,8 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
         $scope.updateScores($scope.correctAnswers);
         $scope.wsSend({
             messageType: 'endQuestion',
-            roomId: $scope.roomName
+            roomId: $scope.roomName,
+            correctAnswers: $scope.correctAnswers
         })
     };
 

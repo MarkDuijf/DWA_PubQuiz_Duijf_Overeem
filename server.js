@@ -144,25 +144,23 @@ theWebSocketServer.on('connection', function(ws){
                             for (var i = 0; i < theWebSocketServer.clients.length; i++) {
                                 if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId._id) {
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                    var dataToSend = {
+                                        messageType: 'openQuestionParticipant',
+                                        roundNr: receivedData.roomId.roundNr,
+                                        questionNr: receivedData.roomId.questionNr,
+                                        teamRoundScores: receivedData.teamRoundScores
+                                    };
+                                    theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
                                 }
                                 else if (theWebSocketServer.clients[i].role === 'spectator') {
-                                    if (receivedData.roomId.roundNr <= 12) {
-                                        var dataToSend = {
-                                            messageType: 'openQuestionSpectator',
-                                            roundNr: receivedData.roomId.roundNr,
-                                            questionNr: receivedData.roomId.questionNr,
-                                            question: receivedData.question
-                                        };
-                                        theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
-                                    }
-                                    else {
-                                        var dataToSend = {
-                                            messageType: 'endRoundSpectator',
-                                            roundNr: receivedData.roundNr,
-                                            questionNr: receivedData.questionNr
-                                        };
-                                        theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
-                                    }
+                                    var dataToSend = {
+                                        messageType: 'openQuestionSpectator',
+                                        roundNr: receivedData.roomId.roundNr,
+                                        questionNr: receivedData.roomId.questionNr,
+                                        question: receivedData.question
+                                    };
+                                    theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+
                                 }
                             }
                         }
@@ -199,10 +197,12 @@ theWebSocketServer.on('connection', function(ws){
                                     else if(theWebSocketServer.clients[j].role === 'host' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
                                         if(result.questionNr <= 12) {
                                             var dataToSend = {
-                                                messageType: 'endQuestionHost'
+                                                messageType: 'endQuestionHost',
+                                                teamRoundScores: receivedData.teamRoundScores
                                             };
                                             theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                         }
+
                                         else{
                                             Room.update({_id: receivedData.roomId}, {
                                                 $inc: {roundNr: 1}, $set: {questionNr: 1}
