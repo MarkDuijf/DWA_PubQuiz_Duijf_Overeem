@@ -96,6 +96,8 @@ theApp.controller("globalController", function($scope, $location, $http, $rootSc
         $scope.currentRoom = room;
         $scope.wsSend({messageType: 'spectateRequest', room: $scope.currentRoom});
         $scope.roomSelected = false;
+        $scope.getRoomInfo({roomName: room._id});
+        $scope.teamsSubmitting = $scope.currentRoomData.teams;
     };
 
     $scope.closeSpecRoom = function(){

@@ -177,6 +177,9 @@ theWebSocketServer.on('connection', function(ws){
                                 if(theWebSocketServer.clients[j].role === 'host' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
                                     theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                 }
+                                if(theWebSocketServer.clients[j].role === 'spectator'){
+                                    theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
+                                }
                             }
                         }
                     break;
