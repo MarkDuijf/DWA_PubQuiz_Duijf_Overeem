@@ -223,6 +223,10 @@ theApp.controller("globalController", function($scope, $location, $http, $rootSc
                 $scope.currentRoom.roundNr = receivedData.roundNr;
                 $scope.currentQuestion = receivedData.question;
             break;
+            case 'endQuiz':
+                alert("Quiz has been stopped!");
+                $location.path('/home');
+            break;
         }
         $scope.$apply();
     };
@@ -251,6 +255,16 @@ theApp.controller("globalController", function($scope, $location, $http, $rootSc
             .error(function(){
 
                 });
+    };
+
+    $scope.endQuiz = function(roomId){
+        $http.post('/host/endQuiz', {roomId: roomId})
+            .success (function(data){
+                $scope.wsSend({roomId: roomId, messageType: 'endQuiz'})
+            })
+            .error (function(status, data){
+
+            });
     };
 
     $scope.openCategorySelection = function(){

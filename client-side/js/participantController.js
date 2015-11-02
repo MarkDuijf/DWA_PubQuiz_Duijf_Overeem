@@ -53,22 +53,28 @@ theApp.controller('participantController', function($scope, $http, $location, $r
 
     $scope.applyToRoom = function(teamName, roomPass){
         $rootScope.teamName = teamName;
-        $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: $scope.roomId})
-            .success(function(data){
-                if(data != 'the password was incorrect!') {
-                    $scope.closeModal();
-                    $scope.wsSend({teamName: data.teamName, roomId: data.roomId, messageType: 'joinRequest'});
-                    $scope.getRooms();
-                    $scope.setWaitingAcceptance(true);
-                    $location.path('/waitingScreen');
-                }
-                else{
-                    alert('the password was incorrect!');
-                }
-            })
-            .error(function(err, data){
-                alert(data);
-            })
+        console.log($rootScope.teamName);
+        if ($rootScope.teamName === undefined){
+            alert('Teamname can not be empty!')
+        }
+        else {
+            $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: $scope.roomId})
+                .success(function (data) {
+                    if (data != 'the password was incorrect!') {
+                        $scope.closeModal();
+                        $scope.wsSend({teamName: data.teamName, roomId: data.roomId, messageType: 'joinRequest'});
+                        $scope.getRooms();
+                        $scope.setWaitingAcceptance(true);
+                        $location.path('/waitingScreen');
+                    }
+                    else {
+                        alert('the password was incorrect!');
+                    }
+                })
+                .error(function (err, data) {
+                    alert(data);
+                })
+        }
     }
 
 });

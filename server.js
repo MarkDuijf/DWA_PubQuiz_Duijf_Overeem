@@ -220,6 +220,18 @@ theWebSocketServer.on('connection', function(ws){
                             })
                         }
                     break;
+                    case 'endQuiz':
+                        for(var j = 0; j<theWebSocketServer.clients.length;j++){
+                            if(theWebSocketServer.clients[j].roomId === receivedData.roomId){
+                                var dataToSend = {
+                                    messageType: 'endQuiz'
+                                };
+                                theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
+                            }
+                        }
+                        return;
+                    break;
+
                 }
             }
         })
@@ -248,11 +260,17 @@ hostRouter.post('/getRoom', function(req, res){
 })
 
 participantRouter.post('/joinRoom', function(req, res){
-    Room.findOne({_id: req.body.roomId}, function(err, result){
-        if(req.body.roomPass === result.password){
+    Room.findOne({_id: req.body.roomId}, function(err, result) {
+        for (var i = 0; i < result.teams.length; i++) {
+            if (req.body.teamName === result.teams[i].teamName) {
+                res.send('this teamname already exists!');
+                return;
+            }
+        }
+        if (req.body.roomPass === result.password) {
             res.send(req.body);
         }
-        else{
+        else {
             res.send('the password was incorrect!');
         }
     })
@@ -312,14 +330,8 @@ hostRouter.post('/becomeHost', function(req,res){
           res.send('the adminPass was incorrect!');
         }
     })
-})
-
-hostRouter.post('/deleteRooms', function(req, res){
-    Room.remove(function(){
-
-    });
-    res.send('rooms deleted!');
 });
+
 
 globalRouter.get('/getQuestions', function(req, res){
     Question.find({}, function(err, result){
@@ -327,7 +339,11 @@ globalRouter.get('/getQuestions', function(req, res){
     });
 });
 
-
+hostRouter.post('/endQuiz', function(req, res){
+    Room.remove({_id: req.body.roomId}, function(err){
+        res.send('Room deleted!')
+    });
+});
 
 
 app.use('/host', hostRouter);
