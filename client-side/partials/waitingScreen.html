@@ -14,7 +14,7 @@
         <h1>Waiting for the quiz to start</h1>
         <img src="images/loader.gif">
     </div>
-    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4" id="mobileHide">
+    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4" class="mobileHide">
         <h2>Teams</h2>
         <ol>
             <li ng-repeat="team in teamsInRoom">{{team.teamName}}</li>
@@ -28,7 +28,7 @@
         <h1>Waiting for the next question to start</h1>
         <img src="images/loader.gif">
     </div>
-    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4" id="mobileHide">
+    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4" class="mobileHide">
         <h2>Teams</h2>
         <ul>
             <li ng-repeat="team in teamsInRoom">{{team.teamName}} - {{team.score}}</li>

@@ -7,7 +7,7 @@ theApp.controller('beamerViewController', function($scope, $http, $location, $ro
                     $scope.rooms.push(room);
                 });
             })
-            .error(function(err, data){
+            .error(function(err){
                 console.log(err);
             })
     };

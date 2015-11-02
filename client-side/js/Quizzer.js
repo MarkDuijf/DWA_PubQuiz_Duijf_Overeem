@@ -192,10 +192,12 @@ theApp.controller("globalController", function($scope, $location, $http, $rootSc
             case 'teamAnswer':
                 console.log('teamName:', receivedData.teamName, 'answer:', receivedData.answer);
                 $scope.teamsSubmitted.push({teamName: receivedData.teamName, answer: receivedData.answer});
+                console.log('scores bij antwoorden:', $scope.currentRoomData.teams);
                 for(var i = 0;i<$scope.teamsSubmitting.length;i++){
                     if($scope.teamsSubmitting[i].teamName === receivedData.teamName){
-                       $scope.teamsSubmitting.splice(i,1);
+                        $scope.teamsSubmitting.splice(i,1);
                     }
+                    console.log('scores bij antwoorden:', $scope.currentRoomData.teams);
                 }
             break;
             case 'openQuestionParticipant':
@@ -241,13 +243,13 @@ theApp.controller("globalController", function($scope, $location, $http, $rootSc
                     }
                 }
                 else if (detail === 'categories') {
-                    for(var i=0; i<data.length; i++){
-                        $scope.info[i] = data[i].category;
+                    for(var j=0; j<data.length; j++){
+                        $scope.info[j] = data[j].category;
                     }
                 }
                 else if(detail === 'all'){
-                    for(var i=0;i<data.length;i++){
-                        $scope.info[i] = data[i];
+                    for(var k=0;k<data.length;k++){
+                        $scope.info[k] = data[k];
                     }
                 }
                 cb($scope.info);
@@ -259,7 +261,7 @@ theApp.controller("globalController", function($scope, $location, $http, $rootSc
 
     $scope.endQuiz = function(roomId){
         $http.post('/host/endQuiz', {roomId: roomId})
-            .success (function(data){
+            .success (function(){
                 $scope.wsSend({roomId: roomId, messageType: 'endQuiz'})
             })
             .error (function(status, data){
@@ -317,7 +319,7 @@ theApp.controller("globalController", function($scope, $location, $http, $rootSc
     $scope.selectCategories = function(selectedCategories){
         $scope.selectedCategories = selectedCategories;
         if(selectedCategories.length === 3) {
-            var allQuestions = $scope.getQuestionInfo('all', function (data) {
+            $scope.getQuestionInfo('all', function (data) {
                 $scope.allQuestions = data;
                 $scope.cat1 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[0]));
                 $scope.cat1Name = $scope.cat1[0].category;
@@ -327,6 +329,7 @@ theApp.controller("globalController", function($scope, $location, $http, $rootSc
                 $scope.cat3Name = $scope.cat3[0].category;
                 $location.path('hostQuestion');
                 $scope.teamRoundScores = $scope.currentRoomData.teams;
+                console.log("Categorieselectie:", $scope.teamRoundScores);
             });
 
             $scope.questionsInCat = function(cat){
@@ -358,29 +361,38 @@ theApp.controller("globalController", function($scope, $location, $http, $rootSc
         }
     };
 
-    $scope.currentRoomData = [];
     $scope.getRoomInfo = function(room){
         $http.post('/host/getRoom', room)
             .success(function(data){
                 $scope.currentRoomData = data;
             })
-            .error(function(status, data){
+            .error(function(){
                 console.log("error");
             });
     };
 
     $scope.selectQuestion = function(question) {
         $scope.selectedQuestion = question;
-    }
+    };
 
     $scope.isSelectedQuestion = function(question){
         return $scope.selectedQuestion === question;
     };
 
     $scope.openQuestionOverview = function(){
-        $location.path('/hostQuestionOverview');
-        $scope.teamsSubmitting = $scope.currentRoomData.teams;
-        $scope.wsSend({messageType: 'questionStart', question: $scope.selectedQuestion.question, roomId: $scope.currentRoomData})
+        if($scope.selectedQuestion === undefined) {
+            alert('Select a question!');
+        }
+        else {
+            $location.path('/hostQuestionOverview');
+            $scope.teamsSubmitting = $scope.currentRoomData.teams;
+            $scope.wsSend({
+                messageType: 'questionStart',
+                question: $scope.selectedQuestion.question,
+                roomId: $scope.currentRoomData,
+                teamRoundScores: $scope.teamRoundScores
+            })
+        }
     };
 
     $scope.updateScores = function(answers){

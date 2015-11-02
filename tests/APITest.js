@@ -3,7 +3,7 @@ var supertest = require('supertest');
 var app = require('../server');
 var agent = supertest.agent(app);
 var Room = require('../models/Room');
-var mongoose = require('mongoose')
+var mongoose = require('mongoose');
 
 var testDbName = 'quizzerDbTest';
 
@@ -28,7 +28,7 @@ mongoose.connect('mongodb://localhost/' + testDbName, function() {
                 adminPass: '123',
                 roundNr: 0,
                 questionNr: 0
-            }, function (err) {
+            }, function () {
                 agent
                     .post('/participant/joinRoom')
                     .send(login)
@@ -113,7 +113,7 @@ mongoose.connect('mongodb://localhost/' + testDbName, function() {
 
         it('moet de room verwijderd worden', function (done) {
             var deleteRoomHost = {
-                roomId: '1',
+                roomId: '1'
             };
             Room.remove({}, function (err) {
 
@@ -126,7 +126,7 @@ mongoose.connect('mongodb://localhost/' + testDbName, function() {
                 adminPass: '123',
                 roundNr: 0,
                 questionNr: 0
-            }, function (err) {
+            }, function () {
                 agent
                     .post('/host/endQuiz')
                     .send(deleteRoomHost)

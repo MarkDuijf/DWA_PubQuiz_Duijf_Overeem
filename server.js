@@ -76,7 +76,7 @@ theWebSocketServer.on('connection', function(ws){
                             var sendData = {
                                 roomId: receivedData.roomId,
                                 messageType: 'hostAccept'
-                            }
+                            };
                             for(var i = 0; i < theWebSocketServer.clients.length;i++){
                                 if(theWebSocketServer.clients[i].role === 'host' && theWebSocketServer.clients[i].roomId === receivedData.roomId){
                                     theWebSocketServer.clients[i].send(JSON.stringify(sendData));
@@ -88,7 +88,7 @@ theWebSocketServer.on('connection', function(ws){
                         if(theWebSocketServer.clients[i] === ws){
                             Room.findOne({_id: receivedData.roomId}, function(err, result){
                                 if(result.teams.length < 6){
-                                    Room.find({_id: receivedData.roomId}, function (err, result) {
+                                    Room.find({_id: receivedData.roomId}, function () {
                                         Room.update({_id: receivedData.roomId}, {
                                             $push: {
                                                 teams: {
@@ -96,7 +96,7 @@ theWebSocketServer.on('connection', function(ws){
                                                     score: 0
                                                 }
                                             }
-                                        }, {upsert: true}, function (err, data) {
+                                        }, {upsert: true}, function () {
                                             for (var i = 0; i < theWebSocketServer.clients.length; i++) {
                                                 if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName) {
                                                     var client = theWebSocketServer.clients[i];
@@ -120,7 +120,7 @@ theWebSocketServer.on('connection', function(ws){
                     case 'rejectTeam':
                         for (var i = 0; i < theWebSocketServer.clients.length; i++) {
                             if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName) {
-                                theWebSocketServer.clients[i].send(JSON.stringify({messageType: 'rejectedTeam'}))
+                                theWebSocketServer.clients[i].send(JSON.stringify({messageType: 'rejectedTeam'}));
                                 return;
                             }
                         }
@@ -140,7 +140,7 @@ theWebSocketServer.on('connection', function(ws){
                                 messageType: 'processStartQuestion',
                                 roomId: receivedData.roomId._id,
                                 question: receivedData.question
-                            }
+                            };
                             for (var i = 0; i < theWebSocketServer.clients.length; i++) {
                                 if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId._id) {
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
@@ -257,7 +257,7 @@ hostRouter.post('/getRoom', function(req, res){
         res.send(result);
     });
 
-})
+});
 
 participantRouter.post('/joinRoom', function(req, res){
     Room.findOne({_id: req.body.roomId}, function(err, result) {
@@ -305,7 +305,7 @@ hostRouter.post('/hostAuthentication', function(req, res){
             session.host = {
                 isHost: true,
                 roomName: null
-            }
+            };
             if (session.host.roomName === req.body.roomName) {
                 res.send('you are now the host!');
             } else {
@@ -322,7 +322,7 @@ hostRouter.post('/becomeHost', function(req,res){
                 isHost: true,
                 roomName: req.body.roomName,
                 teams: []
-            }
+            };
             res.send('allowed!');
         }
         else{

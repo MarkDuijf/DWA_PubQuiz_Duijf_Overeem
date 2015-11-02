@@ -16,9 +16,9 @@ describe('Room', function(){
     beforeEach(function(done){
         Room.remove({}, function(err){
 
-        })
+        });
         done();
-    })
+    });
 
     it('should create a room', function(done){
         Room.create({_id: 'room1', password: '123', teams: [], adminPass: '123', roundNr: 0, questionNr: 0}, function(err){
@@ -46,14 +46,14 @@ describe('Room', function(){
             }
         }, {upsert: true}, function (err, data) {
             expect(err).to.be.null;
-        })
+        });
 
         Room.findOne({}, function(err, result){
             expect(err).to.be.null;
             expect(result.teams.length).to.equal(1);
             done();
         })
-    })
+    });
 
     it('should remove a room', function(done){
         Room.create({_id: 'room1', password: '123', teams: [], adminPass: '123', roundNr: 0, questionNr: 0}, function(err){
@@ -68,4 +68,4 @@ describe('Room', function(){
             })
         })
     })
-})
+});

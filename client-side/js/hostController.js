@@ -6,7 +6,6 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                 _id: $scope.roomName,
                 password: $scope.roomPass,
                 teams: [],
-                teams: [],
                 adminPass: $scope.adminPass,
                 roundNr: 1,
                 questionNr: 1
@@ -70,7 +69,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
             .success(function(data){
                 alert(data)
             })
-            .error(function(err, status){
+            .error(function(err){
                 alert(err);
             })
     };
