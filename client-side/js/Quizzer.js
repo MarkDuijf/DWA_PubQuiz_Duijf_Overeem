@@ -427,9 +427,6 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope) {
     }, {
         Title: 'Spectate',
         LinkText: 'spectator'
-    }, {
-        Title: 'pending Room',
-        LinkText: 'pendingRoom'
     }];
 
     $scope.currentPage = 'home';

@@ -5,7 +5,7 @@ theApp.controller('participantController', function($scope, $http, $location, $r
     $scope.responseText = '';
 
     $scope.submitAnswer = function() {
-        if($scope.answer != undefined){
+        if($scope.answer != undefined || ''){
             $scope.answered = true;
             $scope.responseText = 'Your answer was submitted! You answered: '  +  $scope.answer;
             $scope.wsSend({
