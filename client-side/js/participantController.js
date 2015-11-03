@@ -5,7 +5,7 @@ theApp.controller('participantController', function($scope, $http, $location, $r
     $scope.responseText = '';
 
     $scope.submitAnswer = function() {
-        if($scope.answer != undefined){
+        if($scope.answer != undefined || ''){
             $scope.answered = true;
             $scope.responseText = 'Your answer was submitted! You answered: '  +  $scope.answer;
             $scope.wsSend({
@@ -13,14 +13,14 @@ theApp.controller('participantController', function($scope, $http, $location, $r
                 teamName: $scope.teamName,
                 roomId: $scope.roomId,
                 answer: $scope.answer
-            })
+            });
             $scope.answer = undefined;
         }
         else {
             $scope.answered = true;
             $scope.responseText = 'please answer the question before submitting!';
         }
-    }
+    };
 
     $scope.rooms = [];
     $scope.getRooms = function(){
@@ -31,7 +31,7 @@ theApp.controller('participantController', function($scope, $http, $location, $r
                     $scope.rooms.push(room);
                 });
             })
-            .error(function(err, data){
+            .error(function(err){
                 console.log(err);
             })
     };
@@ -40,35 +40,40 @@ theApp.controller('participantController', function($scope, $http, $location, $r
     $scope.openModal = function(id, teams){
         $scope.showModal = true;
         $scope.teamsInRoom = teams;
-        $rootScope.roomId = id
+        $rootScope.roomId = id;
         console.log($scope.roomId);
     }
 
     $scope.closeModal = function(){
         $scope.showModal = false;
         $scope.teamsInRoom = [];
-        $scope.teamName = ''
+        $scope.teamName = '';
         $scope.password = '';
     };
 
     $scope.applyToRoom = function(teamName, roomPass){
         $rootScope.teamName = teamName;
-        $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: $scope.roomId})
-            .success(function(data){
-                if(data != 'the password was incorrect!') {
-                    $scope.closeModal();
-                    $scope.wsSend({teamName: data.teamName, roomId: data.roomId, messageType: 'joinRequest'});
-                    $scope.getRooms();
-                    $scope.setWaitingAcceptance(true);
-                    $location.path('/waitingScreen');
-                }
-                else{
-                    alert('the password was incorrect!');
-                }
-            })
-            .error(function(err, data){
-                alert(data);
-            })
+        if ($rootScope.teamName === undefined){
+            alert('Teamname can not be empty!')
+        }
+        else {
+            $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: $scope.roomId})
+                .success(function (data) {
+                    if (data != 'the password was incorrect!') {
+                        $scope.closeModal();
+                        $scope.wsSend({teamName: data.teamName, roomId: data.roomId, messageType: 'joinRequest'});
+                        $scope.getRooms();
+                        $scope.setWaitingAcceptance(true);
+                        $location.path('/waitingScreen');
+                    }
+                    else {
+                        alert('the password was incorrect!');
+                    }
+                })
+                .error(function (err, data) {
+                    alert(data);
+                })
+        }
     }
 
 });

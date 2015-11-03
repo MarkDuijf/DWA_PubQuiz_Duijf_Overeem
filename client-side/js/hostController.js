@@ -1,9 +1,6 @@
 theApp.controller('hostController', function($scope, $http, $location, $routeParams){
 
     $scope.createRoom = function(){
-        console.log($scope.roomName);
-        console.log($scope.roomPass);
-        console.log($scope.adminPass);
         if($scope.roomName != undefined && $scope.roomPass != undefined && $scope.adminPass != undefined) {
             var sendData = {
                 _id: $scope.roomName,
@@ -12,7 +9,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                 adminPass: $scope.adminPass,
                 roundNr: 1,
                 questionNr: 1
-            }
+            };
             $http.post('/host/addRoom', sendData)
                 .success(function (data) {
                     if (data === 'this room name is already taken!') {
@@ -37,8 +34,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
         if($routeParams.id == undefined){
             $routeParams.id = prompt('please enter the room you are trying to connect to');
         }
-        var currentRoom = {roomName: $routeParams.id}
-        console.log('roomname: ' + $routeParams.id);
+        var currentRoom = {roomName: $routeParams.id};
         $http.post('/host/hostAuthentication', currentRoom)
             .success(function(data){
                 if(data === 'you are not the host!'){
@@ -46,11 +42,10 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                         adminPass: prompt('Please enter the admin password'),
                         roomName: $routeParams.id
                     };
-                    console.log(adminPass);
                     $http.post('/host/becomeHost', adminPass)
                         .success(function(data){
                             alert(data);
-                            $scope.roomName = $routeParams.id
+                            $scope.roomName = $routeParams.id;
                             $scope.wsSend({messageType: 'becomeHost', roomId: $scope.roomName});
                         })
                         .error(function(status, data){
@@ -74,7 +69,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
             .success(function(data){
                 alert(data)
             })
-            .error(function(err, status){
+            .error(function(err){
                 alert(err);
             })
     };
@@ -89,11 +84,9 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
             }
         }
         else {
-            if ($scope.correctAnswers.length < 3){
-                $scope.correctAnswers.push(answer);
-            }
+            $scope.correctAnswers.push(answer);
         }
-    }
+    };
 
     $scope.isCorrectAnswer = function(answer){
         for (var p = 0; p < $scope.correctAnswers.length; p++){
@@ -102,14 +95,16 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
             }
         }
         return false;
-    }
+    };
     
     $scope.endQuestion = function(){
+        $scope.updateScores($scope.correctAnswers);
         $scope.wsSend({
             messageType: 'endQuestion',
-            roomId: $scope.roomName
+            roomId: $scope.roomName,
+            correctAnswers: $scope.correctAnswers
         })
-    }
+    };
 
     $(function() {
         $("#accordion").accordion({

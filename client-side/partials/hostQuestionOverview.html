@@ -1,8 +1,8 @@
 <div class="col-lg-10 col-md-9 col-sm-8 col-xs-8">
-<h3 class="questionInfo">Round {{currentRoomData.roundNr}}</h3>
-<h3 class="questionInfo">Question {{currentRoomData.questionNr}}/12</h3>
-<h3 class="questionInfo">{{selectedQuestion.question}}</h3>
-<h3 class="questionInfo">{{selectedQuestion.answer}}</h3>
+<h2 class="questionInfo">Round {{currentRoomData.roundNr}}</h2>
+<h2 class="questionInfo">Question {{currentRoomData.questionNr}}/12</h2>
+<h4 class="questionInfo">{{selectedQuestion.question}}</h4>
+<h4 class="questionInfo">Answer: {{selectedQuestion.answer}}</h4>
 
 <div class="col-lg-8 col-lg-offset-2 text-center">
     <h1>Participating teams</h1>
@@ -27,6 +27,6 @@
 <div class="col-lg-2 col-md-3 col-sm-4 col-xs-4">
     <h2>Teamscores</h2>
     <ul class="list-group">
-        <li class="list-group-item" ng-repeat="team in currentRoomData.teams">{{team.teamName}} - {{team.score}}</li>
+        <li class="list-group-item" ng-repeat="team in teamRoundScores">{{team.teamName}} - {{team.score}}</li>
     </ul>
 </div>
