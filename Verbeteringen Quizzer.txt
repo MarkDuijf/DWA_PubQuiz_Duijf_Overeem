@@ -1,0 +1,10 @@
+Bugs:
+- Alerts fixen
+- 2e deelnemer werkend maken
+- Scores werkend maken
+- Routering verminderen
+-- Code terug naar controller
+-- ng-include - databinding die laat zien welk scherm geshowt moet worden
+-- ng-if
+
+Deadline: 17 november
