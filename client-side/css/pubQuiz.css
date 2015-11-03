@@ -1,5 +1,5 @@
 @media screen and (max-width: 790px) {
-    .mobileHide {
+    #mobileHide {
         visibility: hidden;
         clear: both;
         float: left;

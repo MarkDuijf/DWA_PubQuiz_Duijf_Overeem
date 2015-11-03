@@ -12,14 +12,14 @@
         <h2 class="questionInfo">Current room: {{currentRoom._id}}</h2>
         <h3 class="questionInfo">Round {{currentRoom.roundNr}}</h3>
         <h3 class="questionInfo">Question {{currentRoom.questionNr}}/12</h3>
-        <h3 class="questionInfo">{{currentQuestion}}</h3>
+        <h3 class="questionInfo">{{selectedQuestion.question}}</h3>
 
         <div class="col-lg-8 col-lg-offset-2 text-center">
             <h1>Participating teams</h1>
             <div class="col-lg-6">
                 <h3>Teams submitted</h3>
                 <form name="validateAnswers">
-                    <div class="col-lg-12" ng-repeat="teamSubmit in teamsSubmitted">{{teamSubmit.teamName}}: {{teamSubmit.answer}}</div>
+                    <div class="col-lg-12" ng-repeat="teamSubmit in teamsSubmitted"><input name="{{teamSubmit.teamName}}" type="checkbox">{{teamSubmit.teamName}} - "Answer"</div>
                 </form>
             </div>
             <div class="col-lg-6">

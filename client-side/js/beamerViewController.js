@@ -1,4 +1,7 @@
 theApp.controller('beamerViewController', function($scope, $http, $location, $routeParams){
+    $scope.rooms = [];
+    $scope.currentRoom = [];
+
     $scope.getRooms = function(){
         $scope.rooms = [];
         $http.get('/participant/getRooms')
@@ -7,9 +10,36 @@ theApp.controller('beamerViewController', function($scope, $http, $location, $ro
                     $scope.rooms.push(room);
                 });
             })
-            .error(function(err){
+            .error(function(err, data){
                 console.log(err);
             })
     };
+
     $scope.getRooms();
+
+    $scope.openModal = function(id, teams){
+        $scope.showModal = true;
+        $scope.teamsInRoom = teams;
+        var header = document.getElementsByClassName('header');
+        header[0].innerHTML = id;
+    };
+
+    $scope.closeModal = function(){
+        $scope.showModal = false;
+        $scope.teamsInRoom = [];
+        $scope.teamName= '';
+        $scope.password = '';
+    };
+
+    $scope.roomSelected = true;
+
+    $scope.openSpecRoom = function(room){
+        $scope.roomSelected = false;
+        $scope.currentRoom = room;
+    };
+
+    $scope.closeSpecRoom = function(){
+        $scope.roomSelected= true;
+        $scope.currentRoom = [];
+    }
 });
