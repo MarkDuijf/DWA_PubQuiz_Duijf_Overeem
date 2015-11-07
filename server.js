@@ -32,8 +32,6 @@ theWebSocketServer.on('connection', function(ws){
                         if(theWebSocketServer.clients[i] === ws) {
                             theWebSocketServer.clients[i].role = 'spectator';
                             theWebSocketServer.clients[i].roomId = receivedData.room._id;
-                            theWebSocketServer.clients[i].questionNr = receivedData.room.questionNr;
-                            theWebSocketServer.clients[i].roundNr = receivedData.room.roundNr;
                             theWebSocketServer.clients[i].question = receivedData.room.question;
                         var dataToSend = {
                             messageType: 'spectatorAccept',
@@ -41,7 +39,7 @@ theWebSocketServer.on('connection', function(ws){
                             roundNr: receivedData.room.roundNr
                         };
                             for (var i = 0; i < theWebSocketServer.clients.length; i++) {
-                                if (theWebSocketServer.clients[i].role === 'spectator' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
+                                if (theWebSocketServer.clients[i].role === 'spectator' && theWebSocketServer.clients[i].roomId === receivedData.room._id) {
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
                                 }
                             }
@@ -144,16 +142,16 @@ theWebSocketServer.on('connection', function(ws){
                                     };
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
                                     console.log('Stuur naar elke deelnemer!')
-                                theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                    theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
                                 }
-                                else if (theWebSocketServer.clients[i].role === 'spectator') {
+                                else if (theWebSocketServer.clients[i].role === 'spectator' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
                                     var dataToSend = {
                                         messageType: 'openQuestionSpectator',
                                         roundNr: receivedData.roomId.roundNr,
                                         questionNr: receivedData.roomId.questionNr,
                                         question: receivedData.question
                                     };
-                                theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                    theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
                                 }
                             }
                         }

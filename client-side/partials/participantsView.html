@@ -14,7 +14,7 @@
     <div class="modalContent">
         <div class=" col-lg-7">
             <label >Enter Team name:</label><br>
-            <input ng-model="teamName" type="text" class="modalInput input-sm"><br><br>
+            <input ng-model="teamData.teamName" type="text" class="modalInput input-sm"><br><br>
             <label >Enter room password:</label><br>
             <input ng-model="password" type="password" class="modalInput input-sm"><br>
         </div>
@@ -28,7 +28,7 @@
         <div class="footer">
             <div class="pull-right">
                 <button ng-click="closeModal()" class="btn btn-default">Cancel</button>
-                <button ng-click="applyToRoom(teamName, password)" class="btn btn-primary">Submit</button>
+                <button ng-click="applyToRoom(teamData.teamName, password)" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </div>

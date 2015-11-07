@@ -6,6 +6,7 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
     $scope.teamsSubmitting = [];
     $scope.teamsSubmitted = [];
 
+    $scope.teamJoining = false;
 
     $scope.wsConnection = new WebSocket("ws://localhost:3000");
 // this method is not in the official API, but it's very useful.
@@ -360,6 +361,17 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                 console.log("error");
             });
     };
+
+    $scope.endQuiz = function (roomId) {
+        $http.post('/host/endQuiz', {roomId: roomId})
+            .success(function () {
+                $scope.wsSend({roomId: roomId, messageType: 'endQuiz'})
+            })
+            .error(function (status, data) {
+
+            })
+    };
+
 
     $(function() {
         $("#accordion").accordion({
