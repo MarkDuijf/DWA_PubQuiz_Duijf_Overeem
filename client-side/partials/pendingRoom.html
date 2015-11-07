@@ -1,11 +1,11 @@
 <div id="teamRequests" class="col-lg-10 col-md-9 col-sm-8 col-xs-12">
-    <h1>Room name: {{roomName}}</h1>
+    <h1>Room name: {{createRoomData.roomName}}</h1>
 </div>
 <div ng-show="teamJoining" ng-repeat="team in joiningTeams" class="col-lg-4 col-md-5 col-sm-6 col-xs-12">
     <div class="joinRequestBox">
         <h1>{{team}}</h1> <br>
-        <button class="btn-success" ng-click="acceptTeam(roomName, team)">Accept</button>
-        <button class="btn-danger" ng-click="rejectTeam(roomName, team)">Reject</button>
+        <button class="btn-success" ng-click="acceptTeam(createRoomData.roomName, team)">Accept</button>
+        <button class="btn-danger" ng-click="rejectTeam(createRoomData.roomName, team)">Reject</button>
     </div>
 </div>
 <button class=" btn-primary col-lg-6 col-md-8 col-sm-8 col-xs-8" ng-click="openCategorySelection()"><br><h1>Start Quiz</h1><br><br></button>

@@ -1,11 +1,11 @@
 <div class="col-lg-10">
     <h1>Create new room</h1>
     <h3>Roomname</h3>
-    <input class="input-lg" type="text" ng-model="roomName">
+    <input class="input-lg" type="text" ng-model="createRoomData.roomName">
     <h3>Room pass</h3>
-    <input class="input-lg" type="password" ng-model="roomPass"><br>
+    <input class="input-lg" type="password" ng-model="createRoomData.roomPass"><br>
     <h3>Admin pass</h3>
-    <input class="input-lg" type="password" ng-model="adminPass"><br>
+    <input class="input-lg" type="password" ng-model="createRoomData.adminPass"><br>
     <input class="btn-primary" type="submit" value="Create" ng-click="createRoom()">
     <input class="btn-primary" type="submit" value="Delete Rooms" ng-click="deleteRooms()">
 </div>

@@ -136,19 +136,13 @@ theWebSocketServer.on('connection', function(ws){
                     case 'questionStart':
                         if(theWebSocketServer.clients[i] === ws) {
                             for (var i = 0; i < theWebSocketServer.clients.length; i++) {
-                                if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId._id) {
+                                if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
                                     var dataToSend = {
                                         messageType: 'processStartQuestion',
-                                        roomId: receivedData.roomId._id,
+                                        roomId: receivedData.roomId,
                                         question: receivedData.question
                                     };
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
-                                    var dataToSend = {
-                                        messageType: 'openQuestionParticipant',
-                                        roundNr: receivedData.roomId.roundNr,
-                                        questionNr: receivedData.roomId.questionNr,
-                                        teamRoundScores: receivedData.teamRoundScores
-                                    };
                                     console.log('Stuur naar elke deelnemer!')
                                 theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
                                 }
@@ -324,6 +318,8 @@ hostRouter.post('/hostAuthentication', function(req, res){
 
 hostRouter.post('/becomeHost', function(req,res){
     Room.findOne({_id: req.body.roomName}, function(err, result){
+        console.log('result:', result);
+        console.log('reqBody:', req.body);
         if(req.body.adminPass === result.adminPass){
             session.host = {
                 isHost: true,
