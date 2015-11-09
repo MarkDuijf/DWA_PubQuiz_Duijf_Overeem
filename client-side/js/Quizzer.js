@@ -1,7 +1,11 @@
 var theApp = angular.module("QuizzerApp", ['ngRoute']);
+
 theApp.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
+            when('/home', {
+                templateUrl: 'partials/home.html',
+            }).
             when('/participant', {
                 templateUrl: 'partials/participant.html',
                 controller: 'participantController'
@@ -56,5 +60,11 @@ theApp.controller('menuControl', ['$scope', '$location', function ($scope) {
     $scope.isCurrentPage = function(menuItem){
         return menuItem.LinkText === $scope.currentPage;
     }
+
+    $(function() {
+        $("#accordion").accordion({
+            heightStyle: "content"
+        });
+    });
 
 }]);

@@ -1,38 +1,30 @@
-theApp.controller('participantController', function($scope, $http, $location){
+theApp.controller('participantController', ['$scope', '$http', '$location'/*, 'GetRoomInfoService'*/ , function($scope, $http, $location /*GetRoomInfoService*/){
 
     $scope.answered = false;
     $scope.answerData = {};
     $scope.teamData = {};
     $scope.responseText = '';
+    $scope.waitingAcceptance = false;
+    $scope.waitingStartQuiz = false;
+    $scope.waitingNextQuestion = false;
+    $scope.waitingNextRound = false;
+    $scope.template = '/partials/participantsView.html';
+    $scope.rooms = [];
 
-    $scope.getRooms = function () {
+    $scope.getRooms = function(){
         $scope.rooms = [];
         $http.get('/participant/getRooms')
             .success(function (data) {
                 data.forEach(function (room) {
-                    $scope.rooms.push(room)
+                    $scope.rooms.push(room);
                 });
             })
             .error(function (err) {
                 console.log(err);
             })
     };
-    $scope.waitingAcceptance = false;
-    $scope.waitingStartQuiz = false;
-    $scope.waitingNextQuestion = false;
-    $scope.waitingNextRound = false;
 
-    $scope.setWaitingAcceptance = function (boolean) {
-        $scope.waitingAcceptance = boolean;
-    };
-    $scope.setWaitStartQuiz = function (boolean) {
-        $scope.waitingStartQuiz = boolean;
-    };
-    $scope.setWaitingNextQuestion = function (boolean) {
-        $scope.waitingNextQuestion = boolean;
-    };
-
-    $scope.template = '/partials/participantsView.html';
+    $scope.getRooms();
 
     $scope.wsConnection = new WebSocket("ws://localhost:3000");
 // this method is not in the official API, but it's very useful.
@@ -40,7 +32,13 @@ theApp.controller('participantController', function($scope, $http, $location){
     $scope.wsConnection.onopen = function () {
         console.log("Socket connection is open!");
     };
-    $scope.wsConnection.onclose = function (eventInfo) {
+    $scope.wsConnection.onclose = function (message, eventInfo) {
+        var receivedData = JSON.parse(message.data);
+        for(var i=0; i<$scope.teamData.teams.length; i++){
+            if ($scope.teamData.teams[i].teamName === receivedData.teamList.teamName){
+                $scope.teamData.teams.splice(i, 1);
+            }
+        }
         console.log("CONNECTION", eventInfo);
     };
 
@@ -66,6 +64,7 @@ theApp.controller('participantController', function($scope, $http, $location){
                 $scope.template = '/partials/answerQuestion.html';
                 $scope.theQuestion = receivedData.question;
                 $scope.currentQuestion = receivedData.question;
+                $scope.responseText = '';
             break;
             case 'endQuestionParticipant':
                 $scope.setWaitStartQuiz(false);
@@ -80,15 +79,41 @@ theApp.controller('participantController', function($scope, $http, $location){
         $scope.$apply();
     };
 
+    $scope.setWaitingAcceptance = function (boolean) {
+        $scope.waitingAcceptance = boolean;
+    };
+    $scope.setWaitStartQuiz = function (boolean) {
+        $scope.waitingStartQuiz = boolean;
+    };
+    $scope.setWaitingNextQuestion = function (boolean) {
+        $scope.waitingNextQuestion = boolean;
+    };
+
+    $scope.getRoomInfo = function (room) {
+        $http.post('/host/getRoom', room)
+            .success(function (data) {
+                $scope.currentRoomData = data;
+                console.log($scope.currentRoomData);
+            })
+            .error(function () {
+                console.log("error");
+            });
+        //GetRoomInfoService.getRoomInfo(room);
+    };
+
     $scope.submitAnswer = function() {
+        console.log('Gegeven antwoord:', $scope.answerData.answer);
         if($scope.answerData.answer === undefined || $scope.answerData.answer === ''){
+            console.log('Leeg antwoord');
             $scope.answered = true;
             $scope.responseText = 'please answer the question before submitting!';
         }
         else if($scope.answerData.answer === $scope.answerData.sentAnswer){
             $scope.responseText = 'you can\'t submit the same answer twice!';
+            console.log('Dubbel antwoord');
         }
         else {
+            console.log('Opsturen antwoord');
             $scope.answered = true;
             $scope.answerData.sentAnswer = $scope.answerData.answer;
             $scope.responseText = 'Your answer was submitted! You answered: '  +  $scope.answerData.answer;
@@ -99,24 +124,10 @@ theApp.controller('participantController', function($scope, $http, $location){
                 answer: $scope.answerData.answer
             });
             $scope.answerData.answer = undefined;
-            $scope.responseText = '';
         }
     };
 
-    $scope.rooms = [];
-    $scope.getRooms = function(){
-        $scope.rooms = [];
-        $http.get('/participant/getRooms')
-            .success(function(data){
-                data.forEach(function (room) {
-                    $scope.rooms.push(room);
-                });
-            })
-            .error(function(err){
-                console.log(err);
-            })
-    };
-    $scope.getRooms();
+
 
     $scope.openModal = function(id, teams){
         console.log('openModal!');
@@ -132,12 +143,13 @@ theApp.controller('participantController', function($scope, $http, $location){
         $scope.password = '';
     };
 
-    $scope.applyToRoom = function(roomPass){
-        if ($scope.teamData.teamName === undefined){
+    $scope.applyToRoom = function(teamName, roomPass){
+        console.log(roomPass);
+        if (teamName === undefined){
             alert('Teamname can not be empty!')
         }
         else {
-            $http.post('/participant/joinRoom', {teamName: $scope.teamData.teamName, roomPass: roomPass, roomId: $scope.roomId})
+            $http.post('/participant/joinRoom', {teamName: teamName, roomPass: roomPass, roomId: $scope.roomId})
                 .success(function (data) {
                     if (data != 'the password was incorrect!') {
                         $scope.closeModal();
@@ -154,17 +166,6 @@ theApp.controller('participantController', function($scope, $http, $location){
                     alert(data);
                 })
         }
-    }
-
-    $scope.getRoomInfo = function (room) {
-        $http.post('/host/getRoom', room)
-            .success(function (data) {
-                $scope.currentRoomData = data;
-                console.log($scope.currentRoomData);
-            })
-            .error(function () {
-                console.log("error");
-            });
     };
 
-});
+}]);

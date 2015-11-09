@@ -51,7 +51,6 @@ theWebSocketServer.on('connection', function(ws){
                             theWebSocketServer.clients[i].roomId = receivedData.roomId;
                             theWebSocketServer.clients[i].teamName = receivedData.teamName;
 
-                            console.log(theWebSocketServer.clients[i].role, theWebSocketServer.clients[i].roomId);
 
                             var dataToSend = {
                                 messageType: 'processRequest',
@@ -122,7 +121,6 @@ theWebSocketServer.on('connection', function(ws){
                         }
                     break;
                     case "selectedCategories":
-                        console.log('hi!');
                         if(theWebSocketServer.clients[i] === ws) {
                                 for (var i = 0; i < receivedData.categories.length; i++) {
                                     Question.find({category: receivedData.categories[i]}, function (err, result) {
@@ -142,7 +140,6 @@ theWebSocketServer.on('connection', function(ws){
                                     };
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
                                     console.log('Stuur naar elke deelnemer!')
-                                    theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
                                 }
                                 else if (theWebSocketServer.clients[i].role === 'spectator' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
                                     var dataToSend = {
@@ -266,6 +263,8 @@ participantRouter.post('/joinRoom', function(req, res){
                 return;
             }
         }
+        console.log("roomPass verstuurd:", req.body.roomPass);
+        console.log("roomPass room:", result.password);
         if(req.body.roomPass === result.password){
             res.send(req.body);
         }
@@ -316,8 +315,6 @@ hostRouter.post('/hostAuthentication', function(req, res){
 
 hostRouter.post('/becomeHost', function(req,res){
     Room.findOne({_id: req.body.roomName}, function(err, result){
-        console.log('result:', result);
-        console.log('reqBody:', req.body);
         if(req.body.adminPass === result.adminPass){
             session.host = {
                 isHost: true,

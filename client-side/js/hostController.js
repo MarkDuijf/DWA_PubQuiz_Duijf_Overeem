@@ -1,12 +1,12 @@
-theApp.controller('hostController', function($scope, $http, $location, $routeParams){
+theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomInfoService'*/, function($scope, $http, $location/*, GetRoomInfoService*/){
 
     $scope.joiningTeams = [];
     $scope.joinedTeams = [];
-
     $scope.teamsSubmitting = [];
     $scope.teamsSubmitted = [];
-
     $scope.teamJoining = false;
+    $scope.createRoomData = {};
+    $scope.template = '/partials/hosterView.html';
 
     $scope.wsConnection = new WebSocket("ws://localhost:3000");
 // this method is not in the official API, but it's very useful.
@@ -60,7 +60,23 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
                 break;
                 case 'teamAnswer':
                     console.log('teamName:', receivedData.teamName, 'answer:', receivedData.answer);
-                    $scope.teamsSubmitted.push({teamName: receivedData.teamName, answer: receivedData.answer});
+                    if ($scope.teamsSubmitted.length === 0) {
+                        $scope.teamsSubmitted.push({teamName: receivedData.teamName, answer: receivedData.answer});
+                    }
+                    else{
+                        var teamAlreadySubmitted = false;
+                        for (var p = 0; p < $scope.teamsSubmitted.length; p++) {
+                            if ($scope.teamsSubmitted[p].teamName === receivedData.teamName) {
+                                $scope.teamsSubmitted.splice(p, 1);
+                                $scope.teamsSubmitted.push({teamName: receivedData.teamName, answer: receivedData.answer});
+                                teamAlreadySubmitted = true;
+                            }
+                        }
+                        if (teamAlreadySubmitted === false){
+                            $scope.teamsSubmitted.push({teamName: receivedData.teamName, answer: receivedData.answer});
+                        }
+
+                    }
                     for (var i = 0; i < $scope.teamsSubmitting.length; i++) {
                         if ($scope.teamsSubmitting[i].teamName === receivedData.teamName) {
                             $scope.teamsSubmitting.splice(i, 1);
@@ -86,11 +102,20 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
             }
             $scope.$apply();
         };
-    }
+    };
 
+    $scope.getRoomInfo = function (room) {
+        $http.post('/host/getRoom', room)
+            .success(function (data) {
+                $scope.currentRoomData = data;
+                console.log($scope.currentRoomData);
+            })
+            .error(function () {
+                console.log("error");
+            });
+        //GetRoomInfoService.getRoomInfo(room);
+    };
 
-    $scope.createRoomData = {};
-    $scope.template = '/partials/hosterView.html'
     $scope.createRoom = function(){
         console.log($scope.createRoomData.roomName, $scope.createRoomData.roomPass, $scope.createRoomData.adminPass);
         if($scope.createRoomData.roomName != undefined && $scope.createRoomData.roomPass != undefined && $scope.createRoomData.adminPass != undefined) {
@@ -351,17 +376,6 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
             });
     };
 
-    $scope.getRoomInfo = function (room) {
-        $http.post('/host/getRoom', room)
-            .success(function (data) {
-                $scope.currentRoomData = data;
-                console.log($scope.currentRoomData);
-            })
-            .error(function () {
-                console.log("error");
-            });
-    };
-
     $scope.endQuiz = function (roomId) {
         $http.post('/host/endQuiz', {roomId: roomId})
             .success(function () {
@@ -373,9 +387,4 @@ theApp.controller('hostController', function($scope, $http, $location, $routePar
     };
 
 
-    $(function() {
-        $("#accordion").accordion({
-            heightStyle: "content"
-        });
-    });
-});
+}]);
