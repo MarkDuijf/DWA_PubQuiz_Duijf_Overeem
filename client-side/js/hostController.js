@@ -104,6 +104,17 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
         };
     };
 
+
+    $scope.copyArray = function(arrayToCopy){
+        var copy = [];
+
+        for(var i =0; i<arrayToCopy.length;i++){
+            copy[i] = arrayToCopy[i];
+        }
+
+        return copy;
+    };
+
     $scope.getRoomInfo = function (room) {
         $http.post('/host/getRoom', room)
             .success(function (data) {
@@ -327,7 +338,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
         }
         else {
             $scope.template = '/partials/hostQuestionOverview.html';
-            $scope.teamsSubmitting = $scope.currentRoomData.teams;
+            $scope.teamsSubmitting = $scope.copyArray($scope.currentRoomData.teams);
             $scope.wsSend({
                 messageType: 'questionStart',
                 question: $scope.selectedQuestion.question,
