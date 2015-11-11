@@ -27,6 +27,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     $scope.wsConnection.onmessage = function(){
         $scope.wsConnection.onmessage = function (message) {
             var receivedData = JSON.parse(message.data);
+            console.log('on message: ',$scope.teamRoundScores);
             switch (receivedData.messageType) {
                 case 'hostAccept':
                     $scope.roomName = receivedData.roomId;
@@ -91,6 +92,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                     $scope.getRoomInfo({roomName: $scope.currentRoomData._id});
                     $scope.teamsSubmitting = $scope.currentRoomData.teams;
                     $scope.selectCategories($scope.selectedCategories);
+                    $scope.teamRoundScores = receivedData.teamRoundScores;
                 break;
                 case 'endRoundHost':
                     $scope.getRoomInfo({roomName: $scope.currentRoomData._id});
@@ -228,7 +230,8 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
         $scope.wsSend({
             messageType: 'endQuestion',
             roomId: $scope.createRoomData.roomName,
-            correctAnswers: $scope.correctAnswers
+            correctAnswers: $scope.correctAnswers,
+            teamRoundScores: $scope.teamRoundScores
         });
         $scope.correctAnswers = [];
     };

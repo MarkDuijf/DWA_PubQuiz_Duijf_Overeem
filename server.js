@@ -139,7 +139,6 @@ theWebSocketServer.on('connection', function(ws){
                                         question: receivedData.question
                                     };
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
-                                    console.log('Stuur naar elke deelnemer!')
                                 }
                                 else if (theWebSocketServer.clients[i].role === 'spectator' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
                                     var dataToSend = {
@@ -194,27 +193,13 @@ theWebSocketServer.on('connection', function(ws){
                                         {
                                             Room.update({_id: receivedData.roomId}, {$inc: {roundNr: 1}, $set: {questionNr: 1}}, {upsert: true}, function(err, data){});
                                             var dataToSend = {
-                                                messageType: 'endRoundHost'
+                                                messageType: 'endRoundHost',
+                                                teamRoundScores: receivedData.teamRoundScores
                                             };
                                             theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                         }
                                     }
                             }});
-
-                            for(var j = 0; j<theWebSocketServer.clients.length;j++){
-                                if(theWebSocketServer.clients[j].role === 'participant' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
-                                    var dataToSend = {
-                                        messageType: 'endQuestionParticipant'
-                                    }
-                                    theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
-                                }
-                                else if(theWebSocketServer.clients[j].role === 'host' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
-                                    var dataToSend = {
-                                        messageType: 'endQuestionHost'
-                                    }
-                                    theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
-                                }
-                            }
                         }
                     break;
                     case 'endQuiz':
@@ -263,8 +248,6 @@ participantRouter.post('/joinRoom', function(req, res){
                 return;
             }
         }
-        console.log("roomPass verstuurd:", req.body.roomPass);
-        console.log("roomPass room:", result.password);
         if(req.body.roomPass === result.password){
             res.send(req.body);
         }
