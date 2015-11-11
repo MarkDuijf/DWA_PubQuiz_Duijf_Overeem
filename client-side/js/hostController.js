@@ -7,6 +7,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     $scope.teamJoining = false;
     $scope.createRoomData = {};
     $scope.template = '/partials/hosterView.html';
+    $scope.teamRoundScores = [];
 
     $scope.wsConnection = new WebSocket("ws://localhost:3000");
 // this method is not in the official API, but it's very useful.
@@ -19,7 +20,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     };
 
     $scope.wsSend = function (data) {
-        console.log("WS SEND", data, $scope.wsConnection);
+        //console.log("WS SEND", data, $scope.wsConnection);
         $scope.wsConnection.send(JSON.stringify(data));
     };
 
@@ -59,7 +60,8 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                     alert('your room is full! you can\'t accept more teams');
                 break;
                 case 'teamAnswer':
-                    console.log('teamName:', receivedData.teamName, 'answer:', receivedData.answer);
+                    //console.log('teamName:', receivedData.teamName, 'answer:', receivedData.answer);
+                    console.log("begin van t antwoord geven:", $scope.teamRoundScores[0].score);
                     if ($scope.teamsSubmitted.length === 0) {
                         $scope.teamsSubmitted.push({teamName: receivedData.teamName, answer: receivedData.answer});
                     }
@@ -82,10 +84,10 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                             $scope.teamsSubmitting.splice(i, 1);
                         }
                     }
+                    $scope.$apply();
                 break;
                 case 'endQuestionHost':
                     $scope.teamsSubmitted = [];
-                    console.log($scope.currentRoomData._id)
                     $scope.getRoomInfo({roomName: $scope.currentRoomData._id});
                     $scope.teamsSubmitting = $scope.currentRoomData.teams;
                     $scope.selectCategories($scope.selectedCategories);
@@ -119,7 +121,6 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
         $http.post('/host/getRoom', room)
             .success(function (data) {
                 $scope.currentRoomData = data;
-                console.log($scope.currentRoomData);
             })
             .error(function () {
                 console.log("error");
@@ -128,7 +129,6 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     };
 
     $scope.createRoom = function(){
-        console.log($scope.createRoomData.roomName, $scope.createRoomData.roomPass, $scope.createRoomData.adminPass);
         if($scope.createRoomData.roomName != undefined && $scope.createRoomData.roomPass != undefined && $scope.createRoomData.adminPass != undefined) {
             var sendData = {
                 _id: $scope.createRoomData.roomName,
@@ -161,7 +161,6 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
 
     $scope.becomeHost = function(){
         var currentRoom = {roomName: $scope.createRoomData.roomName};
-        console.log(currentRoom);
         $http.post('/host/hostAuthentication', currentRoom)
             .success(function(data){
                 if(data === 'you are not the host!'){
@@ -230,11 +229,12 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
             messageType: 'endQuestion',
             roomId: $scope.createRoomData.roomName,
             correctAnswers: $scope.correctAnswers
-        })
+        });
+        $scope.correctAnswers = [];
     };
 
     $scope.openCategorySelection = function () {
-        $scope.getRoomInfo({roomName: $scope.createRoomData.roomName})
+        $scope.getRoomInfo({roomName: $scope.createRoomData.roomName});
         $scope.getQuestionInfo('categories', function (data) {
             $scope.filteredCategoryList = $scope.filterCategories(data);
             $scope.template = '/partials/selectCategory.html';
@@ -322,9 +322,12 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
         else {
             alert('please select 3 categories!');
         }
+        console.log("einde select cats:", $scope.teamRoundScores[0].score);
     };
 
+
     $scope.selectQuestion = function (question) {
+        console.log("selecteer een vraag", $scope.teamRoundScores[0].score);
         $scope.selectedQuestion = question;
     };
 
@@ -333,6 +336,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     };
 
     $scope.openQuestionOverview = function () {
+        console.log("begin openen questionoverzicht", $scope.teamRoundScores[0].score);
         if ($scope.selectedQuestion === undefined) {
             alert('Select a question!')
         }
@@ -346,20 +350,22 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                 teamRoundScores: $scope.teamRoundScores
             })
         }
-    }
+    };
 
     $scope.updateScores = function(answers){
-        console.log("teamScores: ", $scope.teamRoundScores);
-        console.log("answers:", answers);
+        console.log("Begin scores updaten", $scope.teamRoundScores[0].score);
+        //console.log("teamScores: ", $scope.teamRoundScores);
+        //console.log("answers:", answers);
         for(var j=0; j<answers.length;j++){
             for(var i=0; i<$scope.teamRoundScores.length; i++){
                 if ($scope.teamRoundScores[i].teamName === answers[j].teamName){
                     $scope.teamRoundScores[i].score += 1;
-                    console.log($scope.teamRoundScores.teamName, $scope.teamRoundScores.score);
+                    //console.log('Teamname: ', $scope.teamRoundScores[i].teamName, 'teamScore:', $scope.teamRoundScores[i].score);
                 }
             }
         }
-    }
+        console.log("einde scores updaten", $scope.teamRoundScores[0].score);
+    };
 
     $scope.getQuestionInfo = function (detail, cb) {
         $scope.info = [];
