@@ -240,6 +240,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
         $scope.getRoomInfo({roomName: $scope.createRoomData.roomName});
         $scope.getQuestionInfo('categories', function (data) {
             $scope.filteredCategoryList = $scope.filterCategories(data);
+            $scope.teamRoundScores = $scope.currentRoomData.teams;
             $scope.template = '/partials/selectCategory.html';
         });
     };
@@ -284,6 +285,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     };
 
     $scope.selectCategories = function (selectedCategories) {
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         $scope.selectedCategories = selectedCategories;
         if (selectedCategories.length === 3) {
             $scope.getQuestionInfo('all', function (data) {
@@ -295,7 +297,6 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                 $scope.cat3 = $scope.getRandomQuestions($scope.questionsInCat(selectedCategories[2]));
                 $scope.cat3Name = $scope.cat3[0].category;
                 $scope.template = '/partials/hostStartQuestion.html';
-                $scope.teamRoundScores = $scope.currentRoomData.teams;
             });
 
             $scope.questionsInCat = function (cat) {
