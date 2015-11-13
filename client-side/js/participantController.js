@@ -65,6 +65,7 @@ theApp.controller('participantController', ['$scope', '$http', '$location'/*, 'G
                 $scope.theQuestion = receivedData.question;
                 $scope.currentQuestion = receivedData.question;
                 $scope.responseText = '';
+                $scope.answerData.answer = '';
             break;
             case 'endQuestionParticipant':
                 $scope.setWaitStartQuiz(false);

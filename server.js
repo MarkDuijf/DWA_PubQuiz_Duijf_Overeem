@@ -143,8 +143,8 @@ theWebSocketServer.on('connection', function(ws){
                                 else if (theWebSocketServer.clients[i].role === 'spectator' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
                                     var dataToSend = {
                                         messageType: 'openQuestionSpectator',
-                                        roundNr: receivedData.roomId.roundNr,
-                                        questionNr: receivedData.roomId.questionNr,
+                                        roundNr: receivedData.roundNr,
+                                        questionNr: receivedData.questionNr,
                                         question: receivedData.question
                                     };
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
@@ -182,7 +182,7 @@ theWebSocketServer.on('connection', function(ws){
                                     theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                 }
                                     else if(theWebSocketServer.clients[j].role === 'host' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
-                                        if(result.questionNr <= 12) {
+                                        if(result.questionNr < 12) {
                                             var dataToSend = {
                                                 messageType: 'endQuestionHost',
                                                 teamRoundScores: receivedData.teamRoundScores
@@ -196,8 +196,34 @@ theWebSocketServer.on('connection', function(ws){
                                                 messageType: 'endRoundHost',
                                                 teamRoundScores: receivedData.teamRoundScores
                                             };
+                                            var sortedScores = sortScores(receivedData.teamRoundScores);
+                                            for(var i = 0;i<sortedScores.length;i++){
+                                                if(i === 0){
+                                                    sortedScores[i].score = 4
+                                                }
+                                                else if(i === 1){
+                                                    sortedScores[i].score = 2
+                                                }
+                                                else if(i === 2){
+                                                    sortedScores[i].score = 1
+                                                }
+                                                else{
+                                                    sortedScores[i].score = 0.1
+                                                }
+                                            }
+                                            console.log(sortedScores);
+                                            Room.update({_id: receivedData.roomId}, {$set: {teams: sortedScores}},function(){
+
+                                            })
                                             theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                         }
+                                    }
+                                    else if(theWebSocketServer.clients[j].role === 'spectator' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
+                                        var dataToSend = {
+                                            messageType: 'endQuestionSpectator',
+                                             teamRoundScores: receivedData.teamRoundScores
+                                        }
+                                       theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                     }
                             }});
                         }
@@ -218,6 +244,20 @@ theWebSocketServer.on('connection', function(ws){
         })
 });
 
+var sortScores = function(unsortedScores){
+    var sortedScores = unsortedScores;
+
+    for(var i = 0;i<sortedScores.length;i++){
+        for(var j = 0;j<sortedScores.length-1;j++){
+            if(sortedScores[j].score < sortedScores[j+1].score){
+                var switchVal = sortedScores[j];
+                sortedScores[j] = sortedScores[j+1];
+                sortedScores[j+1] = switchVal;
+            }
+        }
+    }
+    return sortedScores;
+}
 
 
 app.use(express.static(path.join(__dirname, 'client-side')));
@@ -345,7 +385,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + dbName, function(err, db) {
         console.log('Listening on ' + httpServer.address().port)
     });
 });
-
 
 
 module.exports = app;

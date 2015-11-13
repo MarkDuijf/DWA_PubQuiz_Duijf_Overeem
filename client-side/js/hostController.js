@@ -285,7 +285,6 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     };
 
     $scope.selectCategories = function (selectedCategories) {
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         $scope.selectedCategories = selectedCategories;
         if (selectedCategories.length === 3) {
             $scope.getQuestionInfo('all', function (data) {

@@ -58,7 +58,7 @@ theApp.controller('beamerViewController', ['$scope', '$http'/*, 'GetRoomInfoServ
                 console.log('rondeNr: ', $scope.currentRoom.roundNr);
                 break;
             case 'openQuestionSpectator':
-                $scope.teamsSubmitting = $scope.currentRoom.teams;
+                $scope.teamsSubmitting = $scope.copyArray($scope.currentRoom.teams);
                 $scope.teamsSubmitted = [];
                 $scope.getRoomInfo({roomName: $scope.currentRoom._id});
                 $scope.currentRoom.questionNr = receivedData.questionNr;
@@ -87,13 +87,27 @@ theApp.controller('beamerViewController', ['$scope', '$http'/*, 'GetRoomInfoServ
                     }
                 }
             break;
+            case 'endQuestionSpectator':
+                $scope.currentRoom.teams = receivedData.teamRoundScores;
+                $scope.teamsSubmitted = [];
+                $scope.teamsSubmitting = $scope.currentRoom.teams
+            break;
             case 'endQuiz':
                 alert("Quiz has been stopped!");
                 $location.path('/home');
             break;
-
         }
         $scope.$apply();
+    };
+
+    $scope.copyArray = function(arrayToCopy){
+        var copy = [];
+
+        for(var i =0; i<arrayToCopy.length;i++){
+            copy[i] = arrayToCopy[i];
+        }
+
+        return copy;
     };
 
     $scope.getRoomInfo = function (room) {
@@ -102,7 +116,7 @@ theApp.controller('beamerViewController', ['$scope', '$http'/*, 'GetRoomInfoServ
                 $scope.currentRoomData = data;
                 console.log($scope.currentRoomData);
             })
-            .error(function () {
+            .error(function () {APA: Bronnenlijst
                 console.log("error");
             });
         //GetRoomInfoService.getRoomInfo(room)
