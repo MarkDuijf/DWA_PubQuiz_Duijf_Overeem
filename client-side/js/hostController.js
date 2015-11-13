@@ -349,6 +349,8 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
             $scope.wsSend({
                 messageType: 'questionStart',
                 question: $scope.selectedQuestion.question,
+                roundNr: $scope.currentRoomData.roundNr,
+                questionNr: $scope.currentRoomData.questionNr,
                 roomId: $scope.createRoomData.roomName,
                 teamRoundScores: $scope.teamRoundScores
             })

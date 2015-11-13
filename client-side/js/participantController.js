@@ -64,6 +64,8 @@ theApp.controller('participantController', ['$scope', '$http', '$location'/*, 'G
                 $scope.template = '/partials/answerQuestion.html';
                 $scope.theQuestion = receivedData.question;
                 $scope.currentQuestion = receivedData.question;
+                $scope.currentRoomData.questionNr = receivedData.questionNr;
+                $scope.currentRoomData.roundNr = receivedData.roundNr;
                 $scope.responseText = '';
                 $scope.answerData.answer = '';
             break;

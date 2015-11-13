@@ -136,7 +136,9 @@ theWebSocketServer.on('connection', function(ws){
                                     var dataToSend = {
                                         messageType: 'processStartQuestion',
                                         roomId: receivedData.roomId,
-                                        question: receivedData.question
+                                        question: receivedData.question,
+                                        roundNr: receivedData.roundNr,
+                                        questionNr: receivedData.questionNr,
                                     };
                                     theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
                                 }
