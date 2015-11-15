@@ -8,6 +8,8 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     $scope.createRoomData = {};
     $scope.template = '/partials/hosterView.html';
     $scope.teamRoundScores = [];
+    $scope.teamGameScores = [];
+    $scope.eersteKeer = true;
 
     $scope.wsConnection = new WebSocket("ws://localhost:3000");
 // this method is not in the official API, but it's very useful.
@@ -27,7 +29,6 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     $scope.wsConnection.onmessage = function(){
         $scope.wsConnection.onmessage = function (message) {
             var receivedData = JSON.parse(message.data);
-            console.log('on message: ',$scope.teamRoundScores);
             switch (receivedData.messageType) {
                 case 'hostAccept':
                     $scope.roomName = receivedData.roomId;
@@ -61,8 +62,8 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                     alert('your room is full! you can\'t accept more teams');
                 break;
                 case 'teamAnswer':
-                    //console.log('teamName:', receivedData.teamName, 'answer:', receivedData.answer);
-                    console.log("begin van t antwoord geven:", $scope.teamRoundScores[0].score);
+                    console.log('game scores start send answering',$scope.teamGameScores);
+
                     if ($scope.teamsSubmitted.length === 0) {
                         $scope.teamsSubmitted.push({teamName: receivedData.teamName, answer: receivedData.answer});
                     }
@@ -86,7 +87,9 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                         }
                     }
                     $scope.$apply();
-                break;
+                    console.log('game scores end send answering',$scope.teamGameScores);
+
+                    break;
                 case 'endQuestionHost':
                     $scope.teamsSubmitted = [];
                     $scope.getRoomInfo({roomName: $scope.currentRoomData._id});
@@ -98,6 +101,8 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                     $scope.getRoomInfo({roomName: $scope.currentRoomData._id});
                     $scope.categoriesSelected = [];
                     $scope.openCategorySelection();
+                    $scope.teamRoundScores = [];
+                    $scope.teamGameScores = receivedData.teamGameScores;
                 break;
                 case 'endQuiz':
                     alert("Quiz has been stopped!");
@@ -187,7 +192,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                 alert(status + ' ' + data);
                 $location.path('participant')
             })
-    }
+    };
 
 
 
@@ -225,23 +230,32 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     };
     
     $scope.endQuestion = function(){
+        console.log('game scores start end question',$scope.teamGameScores);
         $scope.selectedQuestion = undefined;
         $scope.updateScores($scope.correctAnswers);
         $scope.wsSend({
             messageType: 'endQuestion',
             roomId: $scope.createRoomData.roomName,
             correctAnswers: $scope.correctAnswers,
-            teamRoundScores: $scope.teamRoundScores
+            teamRoundScores: $scope.teamRoundScores,
+            teamGameScores: $scope.teamGameScores
         });
+        console.log('game scores eind end question',$scope.teamGameScores);
+
         $scope.correctAnswers = [];
     };
 
     $scope.openCategorySelection = function () {
         $scope.getRoomInfo({roomName: $scope.createRoomData.roomName});
         $scope.getQuestionInfo('categories', function (data) {
+            if ($scope.eersteKeer === true){
+                $scope.teamGameScores = $scope.copyArray($scope.currentRoomData.teams);
+                $scope.eersteKeer = false;
+            }
             $scope.filteredCategoryList = $scope.filterCategories(data);
             $scope.teamRoundScores = $scope.currentRoomData.teams;
             $scope.template = '/partials/selectCategory.html';
+            console.log('game scores open cat',$scope.teamGameScores);
         });
     };
 
@@ -325,12 +339,10 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
         else {
             alert('please select 3 categories!');
         }
-        console.log("einde select cats:", $scope.teamRoundScores[0].score);
     };
 
 
     $scope.selectQuestion = function (question) {
-        console.log("selecteer een vraag", $scope.teamRoundScores[0].score);
         $scope.selectedQuestion = question;
     };
 
@@ -358,18 +370,16 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     };
 
     $scope.updateScores = function(answers){
-        console.log("Begin scores updaten", $scope.teamRoundScores[0].score);
-        //console.log("teamScores: ", $scope.teamRoundScores);
-        //console.log("answers:", answers);
+        console.log("teamScores: ", $scope.teamRoundScores);
+        console.log("answers:", answers);
         for(var j=0; j<answers.length;j++){
             for(var i=0; i<$scope.teamRoundScores.length; i++){
                 if ($scope.teamRoundScores[i].teamName === answers[j].teamName){
                     $scope.teamRoundScores[i].score += 1;
-                    //console.log('Teamname: ', $scope.teamRoundScores[i].teamName, 'teamScore:', $scope.teamRoundScores[i].score);
+                    console.log('Teamname: ', $scope.teamRoundScores[i].teamName, 'teamScore:', $scope.teamRoundScores[i].score);
                 }
             }
         }
-        console.log("einde scores updaten", $scope.teamRoundScores[0].score);
     };
 
     $scope.getQuestionInfo = function (detail, cb) {

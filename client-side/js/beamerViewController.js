@@ -88,9 +88,9 @@ theApp.controller('beamerViewController', ['$scope', '$http'/*, 'GetRoomInfoServ
                 }
             break;
             case 'endQuestionSpectator':
-                $scope.currentRoom.teams = receivedData.teamRoundScores;
+                $scope.currentRoom.teams = receivedData.teamGameScores;
                 $scope.teamsSubmitted = [];
-                $scope.teamsSubmitting = $scope.currentRoom.teams
+                $scope.teamsSubmitting = $scope.currentRoom.teams;
             break;
             case 'endQuiz':
                 alert("Quiz has been stopped!");

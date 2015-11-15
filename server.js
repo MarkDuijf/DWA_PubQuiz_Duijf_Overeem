@@ -184,11 +184,14 @@ theWebSocketServer.on('connection', function(ws){
                                     theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                 }
                                     else if(theWebSocketServer.clients[j].role === 'host' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
-                                        if(result.questionNr < 12) {
+                                        if(result.questionNr <= 12) {
                                             var dataToSend = {
                                                 messageType: 'endQuestionHost',
-                                                teamRoundScores: receivedData.teamRoundScores
+                                                teamRoundScores: receivedData.teamRoundScores,
+                                                teamGameScores: receivedData.teamGameScores
                                             };
+                                            console.log('ontvangen teamgamescores', receivedData.teamRoundScores)
+
                                             theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                         }
                                         else
@@ -196,7 +199,8 @@ theWebSocketServer.on('connection', function(ws){
                                             Room.update({_id: receivedData.roomId}, {$inc: {roundNr: 1}, $set: {questionNr: 1}}, {upsert: true}, function(err, data){});
                                             var dataToSend = {
                                                 messageType: 'endRoundHost',
-                                                teamRoundScores: receivedData.teamRoundScores
+                                                teamRoundScores: receivedData.teamRoundScores,
+                                                teamGameScores: receivedData.teamGameScores
                                             };
                                             var sortedScores = sortScores(receivedData.teamRoundScores);
                                             for(var i = 0;i<sortedScores.length;i++){
@@ -212,19 +216,25 @@ theWebSocketServer.on('connection', function(ws){
                                                 else{
                                                     sortedScores[i].score = 0.1
                                                 }
-                                            }
-                                            console.log(sortedScores);
-                                            Room.update({_id: receivedData.roomId}, {$set: {teams: sortedScores}},function(){
+                                                for(var s=0; s<receivedData.teamGameScores.length; s++){
+                                                    if (sortedScores[i].teamName === receivedData.teamGameScores[s].teamName){
+                                                        receivedData.teamGameScores[s].score += sortedScores[i].score;
+                                                    }
+                                                }
 
-                                            })
+                                            }
+
+                                            Room.update({_id: receivedData.roomId}, {$set: {teams: receivedData.teamGameScores}}, {upsert: true},function(){
+
+                                            });
                                             theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                         }
                                     }
                                     else if(theWebSocketServer.clients[j].role === 'spectator' && theWebSocketServer.clients[j].roomId === receivedData.roomId){
                                         var dataToSend = {
                                             messageType: 'endQuestionSpectator',
-                                             teamRoundScores: receivedData.teamRoundScores
-                                        }
+                                            teamGameScores: receivedData.teamGameScores
+                                        };
                                        theWebSocketServer.clients[j].send(JSON.stringify(dataToSend));
                                     }
                             }});

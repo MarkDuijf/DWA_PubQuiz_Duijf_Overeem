@@ -130,8 +130,6 @@ theApp.controller('participantController', ['$scope', '$http', '$location'/*, 'G
         }
     };
 
-
-
     $scope.openModal = function(id, teams){
         console.log('openModal!');
         $scope.showModal = true;
