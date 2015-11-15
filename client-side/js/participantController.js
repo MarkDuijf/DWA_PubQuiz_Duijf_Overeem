@@ -57,8 +57,8 @@ theApp.controller('participantController', ['$scope', '$http', '$location'/*, 'G
                 $scope.teamsInRoom = receivedData.teamList;
                 break;
             case 'rejectedTeam':
-                console.log('you got rejected!');
-                $location.path('/participant');
+                alert(receivedData.message);
+                $location.path('/home');
                 break;
             case 'processStartQuestion':
                 $scope.template = '/partials/answerQuestion.html';

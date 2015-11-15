@@ -46,20 +46,39 @@ theWebSocketServer.on('connection', function(ws){
                         }
                     break;
                     case 'joinRequest':
+                        var teamAccepted = true;
+                        var teamRejected = false;
                         if(theWebSocketServer.clients[i] === ws) {
-                            theWebSocketServer.clients[i].role = 'participant';
-                            theWebSocketServer.clients[i].roomId = receivedData.roomId;
-                            theWebSocketServer.clients[i].teamName = receivedData.teamName;
+                            for(var j=0; j<theWebSocketServer.clients.length; j++){
+                                if (!teamRejected) {
+                                    if (theWebSocketServer.clients[j].teamName === receivedData.teamName) {
+                                        var dataToSend = {
+                                            messageType: 'rejectedTeam',
+                                            teamName: receivedData.teamName,
+                                            roomId: receivedData.roomId,
+                                            message: 'Teamname already chosen'
+                                        };
+                                        theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                        teamAccepted = false;
+                                        teamRejected = true;
+                                    }
+                                }
+                            }
+                            if(teamAccepted){
+                                theWebSocketServer.clients[i].role = 'participant';
+                                theWebSocketServer.clients[i].roomId = receivedData.roomId;
+                                theWebSocketServer.clients[i].teamName = receivedData.teamName;
 
 
-                            var dataToSend = {
-                                messageType: 'processRequest',
-                                teamName: receivedData.teamName,
-                                roomId: receivedData.roomId
-                            };
-                            for (var i = 0; i < theWebSocketServer.clients.length; i++) {
-                                if (theWebSocketServer.clients[i].role === 'host' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
-                                    theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                var dataToSend = {
+                                    messageType: 'processRequest',
+                                    teamName: receivedData.teamName,
+                                    roomId: receivedData.roomId,
+                                };
+                                for (var i = 0; i < theWebSocketServer.clients.length; i++) {
+                                    if (theWebSocketServer.clients[i].role === 'host' && theWebSocketServer.clients[i].roomId === receivedData.roomId) {
+                                        theWebSocketServer.clients[i].send(JSON.stringify(dataToSend));
+                                    }
                                 }
                             }
                         }
@@ -115,7 +134,8 @@ theWebSocketServer.on('connection', function(ws){
                     case 'rejectTeam':
                         for (var i = 0; i < theWebSocketServer.clients.length; i++) {
                             if (theWebSocketServer.clients[i].role === 'participant' && theWebSocketServer.clients[i].roomId === receivedData.roomId && theWebSocketServer.clients[i].teamName === receivedData.teamName) {
-                                theWebSocketServer.clients[i].send(JSON.stringify({messageType: 'rejectedTeam'}));
+                                theWebSocketServer.clients[i].send(JSON.stringify({messageType: 'rejectedTeam', message: 'you are not accepted'}));
+                                theWebSocketServer.clients.splice(i, 1);
                                 return;
                             }
                         }
