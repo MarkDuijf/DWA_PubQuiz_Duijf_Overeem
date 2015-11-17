@@ -101,7 +101,9 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                     $scope.getRoomInfo({roomName: $scope.currentRoomData._id});
                     $scope.categoriesSelected = [];
                     $scope.openCategorySelection();
-                    $scope.teamRoundScores = [];
+                    for(var i = 0;i<$scope.teamRoundScores.length;i++){
+                        $scope.teamRoundScores[i].score = 0;
+                    }
                     $scope.teamGameScores = receivedData.teamGameScores;
                 break;
                 case 'endQuiz':
@@ -253,7 +255,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
                 $scope.eersteKeer = false;
             }
             $scope.filteredCategoryList = $scope.filterCategories(data);
-            $scope.teamRoundScores = $scope.currentRoomData.teams;
+            $scope.teamRoundScores = $scope.copyArray($scope.currentRoomData.teams);
             $scope.template = '/partials/selectCategory.html';
             console.log('game scores open cat',$scope.teamGameScores);
         });
@@ -351,7 +353,7 @@ theApp.controller('hostController', ['$scope', '$http', '$location'/*, 'GetRoomI
     };
 
     $scope.openQuestionOverview = function () {
-        console.log("begin openen questionoverzicht", $scope.teamRoundScores[0].score);
+        console.log("begin openen question overzicht", $scope.teamRoundScores[0].score);
         if ($scope.selectedQuestion === undefined) {
             alert('Select a question!')
         }
